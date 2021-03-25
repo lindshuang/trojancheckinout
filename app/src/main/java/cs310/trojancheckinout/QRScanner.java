@@ -125,7 +125,7 @@ public class QRScanner extends AppCompatActivity {
         // USER INFO
         bundle = getIntent().getExtras();
         if(bundle !=null) {
-            currEmail = bundle.getString("email"); //uncomment when you pass in bundle
+            currEmail = sharedData.getCurr_email(); //uncomment when you pass in bundle
             if(currEmail != null || currEmail.length() > 0) {
                 DocumentReference docIdRef2 = db.collection("users").document(currEmail);
 
