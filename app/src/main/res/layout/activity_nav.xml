@@ -6,11 +6,14 @@
     android:layout_height="match_parent"
     android:id="@+id/nav_activity"
     tools:context=".NavActivity">
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/nav_fields"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="100dp"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="60dp"
+        tools:ignore="MissingConstraints">
 
     <Button
         android:id="@+id/check_button"
@@ -18,28 +21,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Check In or Check Out"
-        tools:layout_editor_absoluteX="156dp"
-        tools:layout_editor_absoluteY="495dp"
-        tools:ignore="MissingConstraints" />
+        android:layout_marginTop="50dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="20dp"/>
 
     <Button
         android:id="@+id/profile_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Show Profile"
-        tools:layout_editor_absoluteX="156dp"
-        tools:layout_editor_absoluteY="495dp"
-        tools:ignore="MissingConstraints" />
+        android:layout_marginTop="50dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="20dp"/>
 
     <Button
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Show Buildings"
-        tools:layout_editor_absoluteX="156dp"
-        tools:layout_editor_absoluteY="495dp"
-        tools:ignore="MissingConstraints" />
+        android:layout_marginTop="50dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="20dp"/>
 
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
