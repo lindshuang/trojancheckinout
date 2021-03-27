@@ -478,6 +478,8 @@ public class ProfileActivity extends AppCompatActivity {
                                                             @Override
                                                             public void onSuccess(Void aVoid) {
                                                                 Log.d("Doc", "DocumentSnapshot successfully written!");
+                                                                profilePicView.setContentDescription(picLink);
+                                                                Log.d("Doc", "Description: " + profilePicView.getContentDescription());
                                                                 editLinkDialog.dismiss();
                                                             }
                                                         })

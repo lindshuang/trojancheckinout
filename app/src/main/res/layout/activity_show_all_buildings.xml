@@ -16,6 +16,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/building_make_QR"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/heading"
+        app:layout_constraintStart_toStartOf="@+id/heading"
+        android:text="Make QR"
+        />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/firestore_list"

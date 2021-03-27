@@ -13,6 +13,7 @@
 
         <ImageView
             android:id="@+id/image_view_pic"
+            android:contentDescription="default profile picture"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginTop="50dp"
