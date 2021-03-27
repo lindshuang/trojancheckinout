@@ -293,7 +293,7 @@ public class CheckIn extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d("on home", "home button clicked");
-                Intent intent = new Intent(CheckIn.this, MainActivity.class);
+                Intent intent = new Intent(CheckIn.this, NavActivity.class);
                 intent.putExtra("email", currEmail);
                 startActivityForResult(intent, 0);
             }

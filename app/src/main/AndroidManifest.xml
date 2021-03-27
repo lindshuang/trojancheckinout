@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cs310.trojancheckinout">
 
+    <uses-feature android:name="android.hardware.camera.any" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -10,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".QRScanner"></activity>
+        <activity android:name=".NavActivity"></activity>
+        <activity android:name=".QRScanner" />
         <activity android:name=".CheckIn" />
         <activity
             android:name=".MainActivity"
@@ -29,10 +35,5 @@
         <activity android:name=".ProfileActivity" />
         <activity android:name=".HistoryActivity" />
     </application>
-
-    <uses-feature android:name="android.hardware.camera.any" />
-    <uses-permission android:name="android.permission.CAMERA" />
-
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

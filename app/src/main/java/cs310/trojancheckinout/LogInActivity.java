@@ -102,7 +102,7 @@ public class LogInActivity  extends AppCompatActivity {
                                 Log.d("document", "password is wrong");
                             }
                             else {
-                                Intent intent = new Intent(LogInActivity.this, MainActivity.class);
+                                Intent intent = new Intent(LogInActivity.this, NavActivity.class);
                                 intent.putExtra("email", email);
                                 startActivityForResult(intent, 0);
                                 Log.d("Document", "Document exists!");

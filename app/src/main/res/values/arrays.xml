@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="majors">
+        <item>Computer Science</item>
+        <item>Mechanical Engineering</item>
+        <item>Business</item>
+        <item>Journalism</item>
+        <item>Human Biology</item>
+        <item>Political Science</item>
+    </string-array>
+</resources>
