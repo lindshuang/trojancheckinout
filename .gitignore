@@ -6,3 +6,6 @@
 .gradle/6.1.1/fileHashes/fileHashes.lock
 .gradle/6.1.1/fileHashes/fileHashes.bin
 local.properties
+.gradle/6.1.1/executionHistory/executionHistory.lock
+.gradle/6.1.1/fileHashes/fileHashes.lock
+*.lock
