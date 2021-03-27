@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -45,6 +46,16 @@ public class ShowAllBuildingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_all_buildings);
 
+        Button makeQRButton = (Button) findViewById(R.id.building_make_QR);
+
+        makeQRButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent MakeQRIntent = new Intent(ShowAllBuildingsActivity.this, generateQRActivity.class);
+                startActivity(MakeQRIntent);
+            }
+        });
+
 
         mFireStoreList = findViewById(R.id.firestore_list);
         firebaseFirestore = FirebaseFirestore.getInstance();
@@ -75,7 +86,6 @@ public class ShowAllBuildingsActivity extends AppCompatActivity {
         mFireStoreList.setHasFixedSize(true);
         mFireStoreList.setLayoutManager(new LinearLayoutManager(this));
         mFireStoreList.setAdapter(adapter);
-
 
     }
 
@@ -108,5 +118,7 @@ public class ShowAllBuildingsActivity extends AppCompatActivity {
         Intent intent = new Intent(ShowAllBuildingsActivity.this, ShowAllBuildingsActivity.class);
         startActivity(intent);
     }
+
+
 
 }
