@@ -110,7 +110,7 @@
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="QR Code Invalid! Please try again."
+                    android:text="Building full. Try again later!"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:padding="10dp"/>
