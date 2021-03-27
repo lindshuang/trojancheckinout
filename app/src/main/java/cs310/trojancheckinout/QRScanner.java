@@ -464,7 +464,7 @@ public class QRScanner extends AppCompatActivity {
             Formatter timeInT = new Formatter();
             Calendar gfg_calender = Calendar.getInstance(TimeZone.getTimeZone("PST"));
             //timeInT = new Formatter();
-            timeInT.format("%tH:%tM", gfg_calender, gfg_calender);
+            timeInT.format("%tH:%tM", gfg_calender, gfg_calender); //military time
             String timeInTime = String.valueOf(timeInT);
             Log.d("times",timeInTime+timeInDate);
 

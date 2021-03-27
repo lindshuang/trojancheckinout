@@ -19,6 +19,7 @@
     <Button
         android:id="@+id/building_make_QR"
         android:layout_width="wrap_content"
+        android:layout_marginBottom="30dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/heading"
         app:layout_constraintStart_toStartOf="@+id/heading"
@@ -30,7 +31,7 @@
         android:id="@+id/firestore_list"
         android:layout_width="410dp"
         android:layout_height="615dp"
-        android:layout_marginTop="39dp"
+        android:layout_marginTop="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
