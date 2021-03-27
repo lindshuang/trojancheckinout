@@ -31,7 +31,7 @@
             android:layout_marginTop="30dp"
             android:layout_marginLeft="30dp"
             android:id="@+id/name"
-            android:text="Hi Tommy Trojan!"
+            android:text=""
             android:textColor="#000000"
             android:textSize="25sp"
             />
@@ -43,7 +43,7 @@
             android:layout_marginTop="30dp"
             android:layout_marginLeft="30dp"
             android:id="@+id/status"
-            android:text="You are checked out"
+            android:text=""
             android:textStyle="bold"
             android:textColor="#000000"
             android:textSize="25sp"
@@ -101,7 +101,7 @@
             android:textSize="20sp"
             android:layout_centerInParent = "true"
             android:layout_marginLeft="100dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintTop_toBottomOf="@+id/time"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

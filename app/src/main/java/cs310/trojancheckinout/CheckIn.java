@@ -150,11 +150,11 @@ public class CheckIn extends AppCompatActivity {
         status_id = (TextView) findViewById(R.id.status);
         home_button = (Button) findViewById(R.id.home_button);
 
-            currEmail = sharedData.getCurr_email();
-            Log.d("Email", "currEmail: " + currEmail);
+        currEmail = sharedData.getCurr_email();
+        Log.d("Email", "currEmail: " + currEmail);
 
         try {
-            Thread.sleep(2000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

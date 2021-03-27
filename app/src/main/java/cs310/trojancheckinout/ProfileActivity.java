@@ -543,7 +543,10 @@ public class ProfileActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             checkOut();
+                            Intent checkOutIntent = new Intent(ProfileActivity.this, CheckIn.class);
+                            startActivity(checkOutIntent);
                         }
+
                     });
                 }
             }
