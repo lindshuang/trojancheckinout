@@ -91,7 +91,6 @@ public class CheckIn extends AppCompatActivity {
     private static final int pic_id = 123;
 
     Button checkIn_open_id;
-    Button refresh_id;
     ImageView click_image_id;
     TextView name_id;
     TextView location_id;
@@ -143,24 +142,24 @@ public class CheckIn extends AppCompatActivity {
         setContentView(R.layout.activity_check_in);
         Log.d("printing","went into on create");
 
-
 //        // By ID we can get each component which id is assigned in XML file
         checkIn_open_id = (Button) findViewById(R.id.checkIn_button);
         name_id = (TextView) findViewById(R.id.name);
         location_id = (TextView) findViewById(R.id.lastLocation);
         time_id = (TextView) findViewById(R.id.time);
         status_id = (TextView) findViewById(R.id.status);
-        refresh_id = (Button) findViewById(R.id.refresh_button);
         home_button = (Button) findViewById(R.id.home_button);
 
-        // USER INFO
-        bundle = getIntent().getExtras();
-        if(bundle !=null) {
-            //currEmail = bundle.getString("email"); //uncomment when you pass in bundle
             currEmail = sharedData.getCurr_email();
             Log.d("Email", "currEmail: " + currEmail);
 
-            DocumentReference docIdRef2 = db.collection("users").document(currEmail);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        DocumentReference docIdRef2 = db.collection("users").document(currEmail);
 
             docIdRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
@@ -275,19 +274,6 @@ public class CheckIn extends AppCompatActivity {
                     }
                 }
             });
-        }
-
-        //Refresh button code
-        Log.d("on click", "before refresh code");
-        refresh_id.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("on refresh", "refresh button clicked");
-                Intent intent = new Intent(CheckIn.this, CheckIn.class);
-                intent.putExtra("email", currEmail);
-                startActivityForResult(intent, 0);
-            }
-        });
 
         home_button.setOnClickListener(new View.OnClickListener() {
             @Override
