@@ -180,7 +180,7 @@ public class StudentSignUpActivity  extends AppCompatActivity {
                 db.collection("users").document(email).set(user);
 
 
-                Intent intent = new Intent(StudentSignUpActivity.this, MainActivity.class);
+                Intent intent = new Intent(StudentSignUpActivity.this, NavActivity.class);
                 startActivityForResult(intent, 0);
             }
         });
