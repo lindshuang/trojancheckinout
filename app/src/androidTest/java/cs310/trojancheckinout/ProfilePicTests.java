@@ -88,47 +88,47 @@ public class ProfilePicTests {
         Espresso.onView(allOf(withClassName(endsWith("EditText")))).check(matches(hasErrorText("Invalid Link")));
     }
 
-    @Test
-    public void ChangeProfilePic(){
-        //login
-        Espresso.onView(withId(R.id.email_address_edit)).perform(typeText("linds@usc.edu")); //does not exist
-        Espresso.onView(withId(R.id.email_address_edit)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
-        Espresso.onView(withId(R.id.password_edit)).perform(typeText("123"), ViewActions.closeSoftKeyboard());
-        Espresso.onView(withId(R.id.password_edit)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
-        Espresso.onView(withId(R.id.loginButton)).perform(click());
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        //press profile button
-        Espresso.onView(withText(endsWith("SHOW PROFILE"))).perform(click());
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-        //profile pic
-        Espresso.onView(withId(R.id.button_edit_pic)).perform(click());
-        try {
-            Thread.sleep(1000); //wait for dialog to load
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        Espresso.onView(allOf(withClassName(endsWith("EditText")))).perform(typeText("invalid"), ViewActions.closeSoftKeyboard());
-        Espresso.onView(withText("OK")).perform(click());
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        //onView(withContentDescription("Cute Picture Of Cat"));
-        Espresso.onView(withId(R.id.button_edit_pic)).perform(click());
-        //Espresso.onView(allOf(withClassName(endsWith("EditText")))).check(matches(withContentDescription("Hello!")));
-    }
+//    @Test
+//    public void ChangeProfilePic(){
+//        //login
+//        Espresso.onView(withId(R.id.email_address_edit)).perform(typeText("linds@usc.edu")); //does not exist
+//        Espresso.onView(withId(R.id.email_address_edit)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+//        Espresso.onView(withId(R.id.password_edit)).perform(typeText("123"), ViewActions.closeSoftKeyboard());
+//        Espresso.onView(withId(R.id.password_edit)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+//        Espresso.onView(withId(R.id.loginButton)).perform(click());
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//        //press profile button
+//        Espresso.onView(withText(endsWith("SHOW PROFILE"))).perform(click());
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//        //profile pic
+//        Espresso.onView(withId(R.id.button_edit_pic)).perform(click());
+//        try {
+//            Thread.sleep(1000); //wait for dialog to load
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        Espresso.onView(allOf(withClassName(endsWith("EditText")))).perform(typeText("invalid"), ViewActions.closeSoftKeyboard());
+//        Espresso.onView(withText("OK")).perform(click());
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        //onView(withContentDescription("Cute Picture Of Cat"));
+//        Espresso.onView(withId(R.id.button_edit_pic)).perform(click());
+//        //Espresso.onView(allOf(withClassName(endsWith("EditText")))).check(matches(withContentDescription("Hello!")));
+//    }
 
 }
 

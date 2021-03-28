@@ -39,6 +39,7 @@ public class CreateMAccountShowBuildings {
         }
         Espresso.onView(withId(R.id.email_address_edit)).perform(typeText("nenad@usc.edu"));
         Espresso.onView(withId(R.id.password_edit)).perform(typeText("123"));
+        Espresso.closeSoftKeyboard();
         Espresso.onView(withId(R.id.loginButton)).perform(click());
         try {
             Thread.sleep(2000);
