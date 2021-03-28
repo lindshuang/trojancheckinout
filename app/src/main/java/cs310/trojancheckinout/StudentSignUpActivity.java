@@ -4,8 +4,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.content.Intent;
 
@@ -20,11 +23,6 @@ import cs310.trojancheckinout.models.User;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class StudentSignUpActivity  extends AppCompatActivity {
 
     private EditText firstNameEdit;
@@ -32,8 +30,8 @@ public class StudentSignUpActivity  extends AppCompatActivity {
     private EditText emailEdit;
     private EditText passwordEdit;
     private EditText studentIDEdit;
-    private EditText majorEdit;
     private Button submitBtn;
+    private Spinner majors;
     private TextView errorTexts;
 
     private String firstName;
@@ -42,9 +40,6 @@ public class StudentSignUpActivity  extends AppCompatActivity {
     private String password;
     private String studentID;
     private String major;
-
-    List<String> all_users = new ArrayList<>();
-    boolean checkDuplicate = false;
 
     private FirebaseFirestore db;
 
@@ -59,15 +54,18 @@ public class StudentSignUpActivity  extends AppCompatActivity {
         emailEdit = findViewById(R.id.email_address_edit);
         passwordEdit = findViewById(R.id.password_edit);
         studentIDEdit = findViewById(R.id.student_id_edit);
-        majorEdit = findViewById(R.id.major_edit);
         submitBtn = findViewById(R.id.submitButton);
-
-        errorTexts = (TextView) findViewById(R.id.errorSignUp);
+        majors = findViewById(R.id.major_spinner);
+        errorTexts = findViewById(R.id.error_email);
 
         db = FirebaseFirestore.getInstance();
 
-
-//        Log.d("tag","made it out");
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.majors, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        majors.setAdapter(adapter);
 
         firstNameEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -90,6 +88,7 @@ public class StudentSignUpActivity  extends AppCompatActivity {
                 return true;
             }
         });
+
 
         emailEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -133,7 +132,6 @@ public class StudentSignUpActivity  extends AppCompatActivity {
         passwordEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                errorTexts.setText("");
                 password = passwordEdit.getText().toString();
                 if(password.length() <= 1){
                     passwordEdit.setError("Enter Password");
@@ -146,47 +144,46 @@ public class StudentSignUpActivity  extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 studentID = studentIDEdit.getText().toString();
-                if(studentID.length() <= 9){
+                if(studentID.length() != 10){
                     studentIDEdit.setError("Enter StudentID");
                 }
                 return true;
             }
         });
 
-        majorEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+        majors.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+
             @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                major = majorEdit.getText().toString();
-                if(major.length() <= 1){
-                    majorEdit.setError("Enter Major");
-                }
-                return true;
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                major = adapterView.getItemAtPosition(i).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                //majors.setError("Enter Major");
             }
         });
-
 
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("taggg","got in here the onclicl");
+
                 firstName = firstNameEdit.getText().toString();
                 lastName = lastNameEdit.getText().toString();
                 email = emailEdit.getText().toString();
                 password = passwordEdit.getText().toString();
-                major = majorEdit.getText().toString();
+                major = majors.getSelectedItem().toString();
                 studentID = studentIDEdit.getText().toString();
 
                 User user = new User(firstName, lastName, email, password, studentID, major);
                 db.collection("users").document(email).set(user);
 
-                Intent intent = new Intent(StudentSignUpActivity.this, LogInActivity.class);
+
+                Intent intent = new Intent(StudentSignUpActivity.this, MainActivity.class);
                 startActivityForResult(intent, 0);
-
-
             }
         });
 
-
     }
-
 }

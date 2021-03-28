@@ -11,10 +11,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import android.util.Log;
+
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import androidx.annotation.NonNull;
 
@@ -27,6 +32,7 @@ public class ManagerSignUpActivity  extends AppCompatActivity {
     private EditText emailEdit;
     private EditText passwordEdit;
     private Button submitBtn;
+    private TextView errorTexts;
 
     private String firstName = "";
     private String lastName = "";
@@ -46,6 +52,7 @@ public class ManagerSignUpActivity  extends AppCompatActivity {
         emailEdit = findViewById(R.id.email_address_edit);
         passwordEdit = findViewById(R.id.password_edit);
         submitBtn = findViewById(R.id.submitButton);
+        errorTexts = findViewById(R.id.error_email);
 
         db = FirebaseFirestore.getInstance();
 
@@ -76,7 +83,32 @@ public class ManagerSignUpActivity  extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 email = emailEdit.getText().toString();
-                if(email.length() <= 0){
+                //  boolean checkDupe = callData(email);
+                db.collection("users")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+
+                                        Log.d("success", document.getId() + " => " + document.getData());
+                                        //all_users.add(document.getId());
+                                        if(document.getId().compareTo(email)==0){
+                                            Log.d("set","SETTING");
+                                            emailEdit.setError("Duplicate email");
+                                            errorTexts.setText("Duplicate email");
+                                        }
+                                    }
+                                    Log.d("success2", "success2");
+
+
+                                } else {
+                                    Log.d("bad", "Error getting documents: ", task.getException());
+                                }
+                            }
+                        });
+                if(email.length() <= 1){
                     emailEdit.setError("Enter Email Address");
                 }
                 if(!email.contains("@usc.edu")){
