@@ -32,8 +32,8 @@ public class StudentSignInNoShowBuildings {
 
     @Test
     public void listGoesOverTheFold() {
-        Espresso.onView(withId(R.id.email_address_edit)).perform(typeText("gauritest@usc.edu"));
-        Espresso.onView(withId(R.id.password_edit)).perform(typeText("gauri"));
+        Espresso.onView(withId(R.id.email_address_edit)).perform(typeText("nutakki@usc.edu"));
+        Espresso.onView(withId(R.id.password_edit)).perform(typeText("123"));
         Espresso.onView(withId(R.id.loginButton)).perform(click());
         try {
             Thread.sleep(2000);

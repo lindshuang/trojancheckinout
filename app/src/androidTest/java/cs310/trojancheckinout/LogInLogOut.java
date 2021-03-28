@@ -1,7 +1,5 @@
 package cs310.trojancheckinout;
 
-import android.view.KeyEvent;
-
 import androidx.test.espresso.Espresso;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -12,38 +10,43 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.pressKey;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.hasErrorText;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.endsWith;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class DuplicateEmailReal {
+public class LogInLogOut {
 
     @Rule
     public ActivityScenarioRule<LogInActivity> activityRule =
             new ActivityScenarioRule<>(LogInActivity.class);
 
     @Test
-    public void checkEmailValid() {
-        Espresso.onView(withId(R.id.createAccountButton)).perform(click());
-        Espresso.onView(withId(R.id.studentButton)).perform(click());
-        Espresso.onView(withId(R.id.firstname_edit)).perform(typeText("Jane"));
-        Espresso.onView(withId(R.id.lastname_edit)).perform(typeText("Doe"));
-        Espresso.onView(withId(R.id.student_id_edit)).perform(typeText("1234567890"));
+    public void listGoesOverTheFold() {
         Espresso.onView(withId(R.id.email_address_edit)).perform(typeText("nutakki@usc.edu"));
-        Espresso.onView(withId(R.id.email_address_edit)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+        Espresso.onView(withId(R.id.password_edit)).perform(typeText("123"));
+        Espresso.onView(withId(R.id.loginButton)).perform(click());
         try {
-            Thread.sleep(5000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Espresso.onView(withId(R.id.email_address_edit)).check(matches(hasErrorText("Duplicate email")));
-
+        Espresso.onView(withText(endsWith("SHOW PROFILE"))).perform(click());
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Espresso.onView(withText(endsWith("Log Out"))).perform(click());
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Espresso.onView(withText(endsWith("Email Address: "))).check(matches(isDisplayed()));
     }
-
-
 }

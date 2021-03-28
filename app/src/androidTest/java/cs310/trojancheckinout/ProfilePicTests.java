@@ -65,7 +65,7 @@ public class ProfilePicTests {
         //press profile button
         Espresso.onView(withText(endsWith("SHOW PROFILE"))).perform(click());
         try {
-            Thread.sleep(2000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

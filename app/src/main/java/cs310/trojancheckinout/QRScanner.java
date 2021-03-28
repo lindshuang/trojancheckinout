@@ -567,7 +567,17 @@ public class QRScanner extends AppCompatActivity {
         }
         //if building is already full
         else{
-            Log.d("TAG","went in ELSEE");
+//            Log.d("TAG","went in ELSEE");
+            invalid_pop_up_id.setVisibility(View.VISIBLE);
+//            //on clicking OK
+            ok_b_id.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    //navigate to check in page
+                    Intent intent = new Intent(QRScanner.this, CheckIn.class);
+                    startActivityForResult(intent, 0);
+                    //return;
+                }
+            });
         }
     }
 

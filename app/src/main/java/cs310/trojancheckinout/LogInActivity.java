@@ -103,7 +103,7 @@ public class LogInActivity  extends AppCompatActivity {
                             }
                             else {
                                 Intent intent = new Intent(LogInActivity.this, NavActivity.class);
-                                intent.putExtra("email", email);
+                                //intent.putExtra("email", email);
                                 startActivityForResult(intent, 0);
                                 Log.d("Document", "Document exists!");
                             }

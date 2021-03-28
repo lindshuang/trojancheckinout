@@ -21,7 +21,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class DuplicateEmail {
+public class CreateSAccountMissingFields {
 
     @Rule
     public ActivityScenarioRule<LogInActivity> activityRule =
@@ -79,7 +79,7 @@ public class DuplicateEmail {
         Espresso.onView(withId(R.id.firstname_edit)).perform(typeText("Kira"));
         Espresso.onView(withId(R.id.lastname_edit)).perform(typeText("Pat"));
         Espresso.onView(withId(R.id.student_id_edit)).perform(typeText("1234567890"));
-        Espresso.onView(withId(R.id.email_address_edit)).perform(typeText("kira@gmail.com"));
+        Espresso.onView(withId(R.id.email_address_edit)).perform(typeText("kira@usc.edu"));
         Espresso.onView(withId(R.id.password_edit)).perform(typeText(" "));
         Espresso.onView(withId(R.id.password_edit)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
         Espresso.onView(withId(R.id.password_edit)).check(matches(hasErrorText("Enter Password")));
