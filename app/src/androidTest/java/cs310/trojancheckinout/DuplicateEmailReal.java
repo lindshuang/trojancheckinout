@@ -31,8 +31,8 @@ public class DuplicateEmailReal {
     public void checkEmailValid() {
         Espresso.onView(withId(R.id.createAccountButton)).perform(click());
         Espresso.onView(withId(R.id.studentButton)).perform(click());
-        Espresso.onView(withId(R.id.firstname_edit)).perform(typeText("Kira"));
-        Espresso.onView(withId(R.id.lastname_edit)).perform(typeText("Pat"));
+        Espresso.onView(withId(R.id.firstname_edit)).perform(typeText("Jane"));
+        Espresso.onView(withId(R.id.lastname_edit)).perform(typeText("Doe"));
         Espresso.onView(withId(R.id.student_id_edit)).perform(typeText("1234567890"));
         Espresso.onView(withId(R.id.email_address_edit)).perform(typeText("nutakki@usc.edu"));
         Espresso.onView(withId(R.id.email_address_edit)).perform(pressKey(KeyEvent.KEYCODE_ENTER));

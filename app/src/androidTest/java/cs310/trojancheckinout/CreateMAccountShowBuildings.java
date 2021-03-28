@@ -28,7 +28,7 @@ public class CreateMAccountShowBuildings {
         Espresso.onView(withId(R.id.managerButton)).perform(click());
         Espresso.onView(withId(R.id.firstname_edit)).perform(typeText("Nenad"));
         Espresso.onView(withId(R.id.lastname_edit)).perform(typeText("Medovicic"));
-        Espresso.onView(withId(R.id.email_address_edit)).perform(typeText("nenad@usc.edu"));
+        Espresso.onView(withId(R.id.email_address_edit)).perform(typeText("nenadm@usc.edu"));
         Espresso.onView(withId(R.id.password_edit)).perform(typeText("123"));
         Espresso.closeSoftKeyboard();
         Espresso.onView(withId(R.id.submitButton)).perform(click());
@@ -37,7 +37,7 @@ public class CreateMAccountShowBuildings {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Espresso.onView(withId(R.id.email_address_edit)).perform(typeText("nenad@usc.edu"));
+        Espresso.onView(withId(R.id.email_address_edit)).perform(typeText("nenadm@usc.edu"));
         Espresso.onView(withId(R.id.password_edit)).perform(typeText("123"));
         Espresso.onView(withId(R.id.loginButton)).perform(click());
         try {
