@@ -141,7 +141,7 @@ public class ManagerSignUpActivity  extends AppCompatActivity {
                 // Log.d("TESTT",  firstName + lastName + email + password);
                 db.collection("users").document(email).set(user);
 
-                Intent intent = new Intent(ManagerSignUpActivity.this, MainActivity.class);
+                Intent intent = new Intent(ManagerSignUpActivity.this, LogInActivity.class);
                 startActivityForResult(intent, 0);
 
             }

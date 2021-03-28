@@ -27,13 +27,13 @@ public class CreateSAccountLogIn {
     public void listGoesOverTheFold() {
         Espresso.onView(withId(R.id.createAccountButton)).perform(click());
         Espresso.onView(withId(R.id.studentButton)).perform(click());
-        Espresso.onView(withId(R.id.firstname_edit)).perform(typeText("Kira"));
-        Espresso.onView(withId(R.id.lastname_edit)).perform(typeText("Pat"));
+        Espresso.onView(withId(R.id.firstname_edit)).perform(typeText("Mary"));
+        Espresso.onView(withId(R.id.lastname_edit)).perform(typeText("Stewart"));
         Espresso.onView(withId(R.id.student_id_edit)).perform(typeText("1234567890"));
-        Espresso.onView(withId(R.id.email_address_edit)).perform(typeText("kira@gmail.com"));
+        Espresso.onView(withId(R.id.email_address_edit)).perform(typeText("mary@usc.edu"));
         Espresso.onView(withId(R.id.password_edit)).perform(typeText("123"));
         Espresso.onView(withId(R.id.major_spinner)).perform(click());
-        Espresso.onData(allOf(is(instanceOf(String.class)), is("Journalism"))).perform(click());
+        Espresso.onData(allOf(is(instanceOf(String.class)), is("Human Biology"))).perform(click());
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
@@ -47,7 +47,7 @@ public class CreateSAccountLogIn {
             e.printStackTrace();
         }
 //        Espresso.onView(withId(R.id.major_spinner)).check(matches(withSpinnerText(containsString(selectionText))));
-        Espresso.onView(withId(R.id.email_address_edit)).perform(typeText("kira@gmail.com"));
+        Espresso.onView(withId(R.id.email_address_edit)).perform(typeText("mary@usc.edu"));
         Espresso.onView(withId(R.id.password_edit)).perform(typeText("123"));
         Espresso.onView(withId(R.id.loginButton)).perform(click());
         try {
