@@ -154,7 +154,7 @@ public class CheckIn extends AppCompatActivity {
         Log.d("Email", "currEmail: " + currEmail);
 
 //        try {
-//            Thread.sleep(5000);
+//            Thread.sleep(3000);
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
@@ -166,7 +166,7 @@ public class CheckIn extends AppCompatActivity {
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     userDoc = task.getResult();
                     if (task.isSuccessful()) {
-                        //User(String firstName, String lastName, String email, String password, boolean checked_in, String occupation, String studentID, String profilePicture
+                        //User(String firstName, String lastName, String email, String lindspassword, boolean checked_in, String occupation, String studentID, String profilePicture
                         current_student = new User(
                                 userDoc.getString("firstName"),
                                 userDoc.getString("lastName"),

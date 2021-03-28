@@ -175,7 +175,7 @@ public class QRScanner extends AppCompatActivity {
 
                 Toast.makeText(getApplicationContext(), qrCode, Toast.LENGTH_SHORT).show();
                 Log.d("qr scanner", "qr scanner 4");
-                Log.i(MainActivity.class.getSimpleName(), "QR Code Found: " + qrCode);
+                //Log.i(MainActivity.class.getSimpleName(), "QR Code Found: " + qrCode);
             }
         });
 
@@ -342,6 +342,7 @@ public class QRScanner extends AppCompatActivity {
                         }
                         //navigate back to check in page
                         Log.d("on click", "confirm pop up - leaving qr scanner");
+                        //thread sleep
                         Intent intent = new Intent(QRScanner.this, CheckIn.class);
                         startActivityForResult(intent, 0);
                     }
