@@ -7,21 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".CheckIn">
 
-    <Button
-        android:id="@+id/refresh_button"
-        android:layout_width="125dp"
-        android:layout_height="51dp"
-        android:textStyle="bold"
-        android:text="Refresh"
-        android:textColor="#000000"
-        android:textSize="18sp"
-        android:layout_centerInParent = "true"
-        android:layout_marginLeft="200dp"
-        android:layout_marginTop="100dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -46,7 +31,7 @@
             android:layout_marginTop="30dp"
             android:layout_marginLeft="30dp"
             android:id="@+id/name"
-            android:text="Hi Tommy Trojan!"
+            android:text=""
             android:textColor="#000000"
             android:textSize="25sp"
             />
@@ -58,7 +43,7 @@
             android:layout_marginTop="30dp"
             android:layout_marginLeft="30dp"
             android:id="@+id/status"
-            android:text="You are checked out"
+            android:text=""
             android:textStyle="bold"
             android:textColor="#000000"
             android:textSize="25sp"
@@ -116,7 +101,7 @@
             android:textSize="20sp"
             android:layout_centerInParent = "true"
             android:layout_marginLeft="100dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintTop_toBottomOf="@+id/time"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

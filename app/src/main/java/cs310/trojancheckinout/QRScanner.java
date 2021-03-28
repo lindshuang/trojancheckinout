@@ -84,6 +84,7 @@ public class QRScanner extends AppCompatActivity {
     Button cancel_b_id;
     Button ok_b_id;
     LinearLayout invalid_pop_up_id;
+    TextView invalid_text_id;
 
     //Database Reading -- Access a Cloud Firestore instance from your Activity
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -159,6 +160,7 @@ public class QRScanner extends AppCompatActivity {
         cancel_b_id =(Button) findViewById(R.id.cancelButton);
         ok_b_id = (Button) findViewById(R.id.okButton);
         invalid_pop_up_id = (LinearLayout) findViewById(R.id.pop_up_invalid);
+        invalid_text_id = (TextView) findViewById(R.id.invalid_text);
 
         Log.d("qr scanner", "qr scanner 1");
         previewView = findViewById(R.id.activity_main_previewView);
@@ -279,29 +281,26 @@ public class QRScanner extends AppCompatActivity {
                                         }
                                         Log.d("success", document.getId());
                                     }
+                                    Log.d("valid","VALID CHECK2"+validCode);
+                                    if(validCode==false){
+                                        Log.d("valid","VALID CHECK"+validCode);
+
+                                        invalid_pop_up_id.setVisibility(View.VISIBLE);
+                                        invalid_text_id.setText("Building Not Found.");
+                                        ok_b_id.setOnClickListener(new View.OnClickListener() {
+                                            public void onClick(View v) {
+                                                Intent intent = new Intent(QRScanner.this, CheckIn.class);
+                                                startActivityForResult(intent, 0);
+
+                                            }
+                                        });
+                                    }
                                 } else {
                                     Log.d("bad", "Error getting documents: ", task.getException());
                                 }
                             }
                         });
                 Log.d("valid", "about to return valid code. value is " + validCode);
-
-                if(validCode == false) {
-                    Log.d("validate", "x validCode = " + validCode);
-
-                    //pop up
-                    //invalid_pop_up_id.setVisibility(View.VISIBLE);
-                    //on clicking OK
-//                    ok_b_id.setOnClickListener(new View.OnClickListener() {
-//                        public void onClick(View v) {
-//                            invalid_pop_up_id.setVisibility(View.INVISIBLE);
-//                            //navigate to check in page
-//                            Intent intent = new Intent(QRScanner.this, CheckIn.class);
-//                            startActivityForResult(intent, 0);
-//                            //return;
-//                        }
-//                    });
-                }
 
 
                 //Confirm Pop-Up goes to visible
@@ -464,7 +463,7 @@ public class QRScanner extends AppCompatActivity {
             Formatter timeInT = new Formatter();
             Calendar gfg_calender = Calendar.getInstance(TimeZone.getTimeZone("PST"));
             //timeInT = new Formatter();
-            timeInT.format("%tH:%tM", gfg_calender, gfg_calender);
+            timeInT.format("%tl:%tM", gfg_calender, gfg_calender);
             String timeInTime = String.valueOf(timeInT);
             Log.d("times",timeInTime+timeInDate);
 
@@ -515,7 +514,7 @@ public class QRScanner extends AppCompatActivity {
                         }
                     });
             statusRef
-                     .update("current_qr", current_student.getCurrent_qr())
+                    .update("current_qr", current_student.getCurrent_qr())
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -568,8 +567,7 @@ public class QRScanner extends AppCompatActivity {
         }
         //if building is already full
         else{
-            //return to the home screen
-            //building full popup
+            Log.d("TAG","went in ELSEE");
         }
     }
 
@@ -642,6 +640,15 @@ public class QRScanner extends AppCompatActivity {
 
                     if (!document.exists()) {
                         Log.d("document", "Document does not exist! in check in function");
+                        invalid_pop_up_id.setVisibility(View.VISIBLE);
+                        invalid_text_id.setText("Building Not Found.");
+                        ok_b_id.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View v) {
+                                Intent intent = new Intent(QRScanner.this, CheckIn.class);
+                                startActivityForResult(intent, 0);
+
+                            }
+                        });
 
                     }
                     else {
@@ -726,14 +733,14 @@ public class QRScanner extends AppCompatActivity {
 
                         Formatter timeOutT = new Formatter();
                         Calendar gfg_calender = Calendar.getInstance(TimeZone.getTimeZone("PST"));
-                        timeOutT.format("%tH:%tM", gfg_calender, gfg_calender);
+                        timeOutT.format("%tl:%tM", gfg_calender, gfg_calender);
                         String timeOutTime = String.valueOf(timeOutT);
                         Log.d("time out date", "time Out Time "+ timeOutTime);
 
                         //calculate time elapsed
                         try {
                             Log.d("try", "went into try");
-                            SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+                            SimpleDateFormat format = new SimpleDateFormat("hh:mm");
                             Date date1 = format.parse(timeIn_db);
                             Log.d("date1","date1");
                             Date date2 = format.parse(timeOutTime);
