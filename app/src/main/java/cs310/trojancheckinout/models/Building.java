@@ -60,8 +60,8 @@ public class Building {
     private String QRcode;
 //    private String buildingCode;
 
-    private Building() {}
-    private Building(String buildingName, String currCapacity, String maxCapacity, List<String> occupants, String qrCode, String buildingCode) {
+    public Building() {}
+    public Building(String buildingName, String currCapacity, String maxCapacity, List<String> occupants, String qrCode, String buildingCode) {
         this.buildingName = buildingName;
         this.currCapacity = currCapacity;
         this.maxCapacity = maxCapacity;

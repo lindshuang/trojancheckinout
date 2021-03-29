@@ -4,14 +4,14 @@ import android.app.Application;
 
 public class MyApplication extends Application {
 
-    private String building_key = "";
+    private static String building_key = "";
 
-    public String getSomeVariable() {
+    public static String getSomeVariable() {
         return building_key;
     }
 
-    public void setSomeVariable(String building_key) {
-        this.building_key = building_key;
+    public static void setSomeVariable(String building_key) {
+        MyApplication.building_key = building_key;
     }
 
 }
