@@ -153,11 +153,11 @@ public class CheckIn extends AppCompatActivity {
         currEmail = sharedData.getCurr_email();
         Log.d("Email", "currEmail: " + currEmail);
 
-//        try {
-//            Thread.sleep(3000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         DocumentReference docIdRef2 = db.collection("users").document(currEmail);
 

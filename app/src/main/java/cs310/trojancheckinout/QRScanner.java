@@ -343,6 +343,11 @@ public class QRScanner extends AppCompatActivity {
                         //navigate back to check in page
                         Log.d("on click", "confirm pop up - leaving qr scanner");
                         //thread sleep
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         Intent intent = new Intent(QRScanner.this, CheckIn.class);
                         startActivityForResult(intent, 0);
                     }
