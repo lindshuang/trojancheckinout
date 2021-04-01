@@ -28,6 +28,7 @@ public class NavActivity extends AppCompatActivity {
         setContentView(R.layout.activity_nav);
         Button profileButton = (Button) findViewById(R.id.profile_button);
         Button showBuildingsButton = (Button) findViewById(R.id.button);
+        Button searchStudentsButton = (Button) findViewById(R.id.search_students_button);
 
         DocumentReference docIdRef2 = db.collection("users").document(sharedData.getCurr_email());
 
@@ -58,13 +59,20 @@ public class NavActivity extends AppCompatActivity {
             }
         });
 
-
-
         showBuildingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent buildingActivityIntent = new Intent(NavActivity.this, ShowAllBuildingsActivity.class);
                 startActivityForResult(buildingActivityIntent, 0);
+            }
+        });
+
+
+        searchStudentsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent searchActivityIntent = new Intent(NavActivity.this, SearchStudents.class);
+                startActivityForResult(searchActivityIntent, 0);
             }
         });
 

@@ -8,4 +8,12 @@
         <item>Human Biology</item>
         <item>Political Science</item>
     </string-array>
+    <string-array name="buildings">
+        <item>CI</item>
+        <item>DHE</item>
+        <item>SAL</item>
+        <item>JFF</item>
+        <item>TCC</item>
+        <item>THH</item>
+    </string-array>
 </resources>
