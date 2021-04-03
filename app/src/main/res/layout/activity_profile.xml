@@ -113,7 +113,19 @@
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edit Profile Picture"
+            android:text="Edit Profile Picture with Link"
+            android:padding="0dp"
+            android:textColor="#4D98A1"
+            android:textAlignment="viewStart"
+            android:textSize="14sp"
+            />
+
+        <Button
+            android:id="@+id/button_edit_pic_gallery"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Profile Picture from Gallery"
             android:padding="0dp"
             android:textColor="#4D98A1"
             android:textAlignment="viewStart"

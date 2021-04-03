@@ -302,11 +302,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -325,6 +329,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -347,6 +353,7 @@ public class ProfileActivity extends AppCompatActivity {
     private String picLink;
     private DocumentSnapshot userDoc;
     public static String QR_test;
+    public static final int GET_FROM_GALLERY = 3;
     ///private EditText picEditText;
 
     //user variables
@@ -408,6 +415,7 @@ public class ProfileActivity extends AppCompatActivity {
                     Button logoutButton = findViewById(R.id.button_logout);
                     Button deleteAccount = findViewById(R.id.button_delete_account);
                     Button checkoutButton = findViewById(R.id.button_checkout_profile);
+                    Button editProfileGalleryButton = findViewById(R.id.button_edit_pic_gallery);
 
                     if (currUser.isChecked_in()){
                         checkoutButton.setVisibility(View.VISIBLE);
@@ -538,6 +546,14 @@ public class ProfileActivity extends AppCompatActivity {
                         }
                     });
 
+                    //Click Edit Profile Pic from Gallery
+                    editProfileGalleryButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
+                        }
+                    });
+
                     //Click check out button
                     checkoutButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -552,6 +568,29 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
+
+    //Edit Profile Pic from Gallery
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //Detects request codes
+        if(requestCode==GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
+            Uri selectedImage = data.getData();
+            Bitmap bitmap = null;
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                profilePicView.setImageBitmap(bitmap);
+            } catch (FileNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
 
 
     //Log Out Button Function
