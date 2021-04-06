@@ -1,301 +1,3 @@
-//package cs310.trojancheckinout;
-//
-//import androidx.annotation.NonNull;
-//import androidx.annotation.RequiresApi;
-//import androidx.appcompat.app.AppCompatActivity;
-//
-//import android.app.AlertDialog;
-//import android.content.DialogInterface;
-//import android.content.Intent;
-//import android.os.Build;
-//import android.os.Bundle;
-//import android.text.TextUtils;
-//import android.util.Log;
-//import android.view.View;
-//import android.widget.Button;
-//import android.widget.EditText;
-//import android.widget.ImageView;
-//import android.widget.TextView;
-//
-//import com.google.android.gms.tasks.OnCompleteListener;
-//import com.google.android.gms.tasks.OnFailureListener;
-//import com.google.android.gms.tasks.OnSuccessListener;
-//import com.google.android.gms.tasks.Task;
-//import com.google.firebase.firestore.DocumentReference;
-//import com.google.firebase.firestore.DocumentSnapshot;
-//import com.google.firebase.firestore.FirebaseFirestore;
-//import com.squareup.picasso.Callback;
-//import com.squareup.picasso.Picasso;
-//
-//import cs310.trojancheckinout.models.User;
-//
-//public class ProfileActivity extends AppCompatActivity {
-//
-//    private ImageView profilePicView;
-//    private FirebaseFirestore db;
-//    private User currUser;
-//    private AlertDialog.Builder builder;
-//    private Bundle bundle;
-//    private String currEmail;
-//    private String picLink;
-//    private DocumentSnapshot userDoc;
-//    ///private EditText picEditText;
-//
-//    @RequiresApi(api = Build.VERSION_CODES.O)
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//
-//        //get db and bundle and current user
-//        db = FirebaseFirestore.getInstance();
-//        bundle = getIntent().getExtras();
-//        currEmail = bundle.getString("email"); //uncomment when you pass in bundle
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_profile);
-//
-//        //create user object since we need almost all the info
-//        //currEmail = "nutakki@usc.edu"; //temporary, just for testing
-//
-//        DocumentReference docIdRef = db.collection("users").document(currEmail);
-//        docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                userDoc = task.getResult();
-//                if (task.isSuccessful()) {
-//                    //User(String firstName, String lastName, String email, String password, boolean checked_in, String occupation, String studentID, String profilePicture
-//                    currUser = new User(
-//                            userDoc.getString("firstName"),
-//                            userDoc.getString("lastName"),
-//                            userDoc.getString("email"),
-//                            userDoc.getString("password"),
-//                            userDoc.getBoolean("checked_in"),
-//                            userDoc.getString("occupation"),
-//                            userDoc.getString("studentID"),
-//                            userDoc.getString("profilePicture"));
-//
-//                    //Buttons
-//                    Button viewHistory = findViewById(R.id.button_view_history);
-//                    Button editProfileButton = findViewById(R.id.button_edit_pic);
-//                    Button logoutButton = findViewById(R.id.button_logout);
-//                    Button deleteAccount = findViewById(R.id.button_delete_account);
-//
-//                    //Text Views
-//                    TextView nameView = findViewById(R.id.text_view_name);
-//                    TextView emailView = findViewById(R.id.text_view_email);
-//                    TextView studentIDView = findViewById(R.id.text_view_id);
-//                    TextView majorView = findViewById(R.id.text_view_major);
-//                    TextView occupationView = findViewById(R.id.text_view_project_role);
-//                    profilePicView = findViewById(R.id.image_view_pic);
-//
-//                    //Display Data
-//                    String fullName = currUser.getFirstName() + " " + currUser.getLastName();
-//                    nameView.setText(fullName);
-//                    emailView.setText("Email: " + currUser.getEmail());
-//                    studentIDView.setText("Student ID: " + currUser.getStudentID());
-//                    majorView.setText("Major: " + "Computer Science");
-//                    occupationView.setText(currUser.getOccupation());
-//                    final String profilePic = currUser.getProfilePicture();
-//                    Picasso.get().load(profilePic).into(profilePicView);
-//
-//                    //Dialog for Picture Link
-//                    final AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this)
-//                            .setPositiveButton("OK", null);
-//                    final EditText input = new EditText(ProfileActivity.this);
-//                    builder.setTitle("Enter Link to Profile Picture");
-//                    builder.setView(input);
-//                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            dialog.cancel();
-//                        }
-//                    });
-//
-//                    final AlertDialog editLinkDialog = builder.create();
-//
-//                    //Override so we don't submit on invalid input
-//                    editLinkDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-//                        @Override
-//                        public void onShow(DialogInterface dialogInterface) {
-//
-//                            Button button = ((AlertDialog) editLinkDialog).getButton(AlertDialog.BUTTON_POSITIVE);
-//                            button.setOnClickListener(new View.OnClickListener() {
-//
-//                                @Override
-//                                public void onClick(View view) {
-//
-//                                    final String oldPicLink = profilePic;
-//                                    picLink = input.getText().toString();
-//                                    picLink = picLink.replaceAll("\\s+","");
-//                                    Log.d("document", "Link:(" + picLink + ")");
-//                                    if(TextUtils.isEmpty(picLink)){
-//                                        input.setError("No Link Provided");
-//                                    }else{
-//                                        Log.d("test", picLink);
-//
-//                                        Picasso.get().load(picLink).into(profilePicView, new Callback() {
-//                                            @Override
-//                                            public void onSuccess() {
-//                                                DocumentReference currDoc = db.collection("users").document(currEmail);
-//                                                currDoc.update("profilePicture", picLink)
-//                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                                            @Override
-//                                                            public void onSuccess(Void aVoid) {
-//                                                                Log.d("Doc", "DocumentSnapshot successfully written!");
-//                                                                editLinkDialog.dismiss();
-//                                                            }
-//                                                        })
-//                                                        .addOnFailureListener(new OnFailureListener() {
-//                                                            @Override
-//                                                            public void onFailure(@NonNull Exception e) {
-//                                                                Log.w("Doc", "Error writing document", e);
-//                                                            }
-//                                                        });
-//                                            }
-//                                            @Override
-//                                            public void onError(Exception e) {
-//                                                input.setError("Invalid Link");
-//                                                Picasso.get().load(oldPicLink).into(profilePicView);
-//                                            }
-//                                        });
-//                                    }
-//                                }
-//                            });
-//                        }
-//                    });
-//
-//                    //Click Edit Profile Button
-//                    editProfileButton.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            Log.d("Profile", "button Clicked");
-//                            //editProfilePic(picEditText)
-//                            editLinkDialog.show();
-//                        }
-//                    });
-//
-//                    //Click Log Out Button
-//                    logoutButton.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            logout();
-//                        }
-//                    });
-//
-//                    //Click Delete Account Button
-//                    deleteAccount.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            deleteAccount();
-//                        }
-//                    });
-//
-//                    //Click View History Button
-//                    viewHistory.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            Intent profileActivityIntent = new Intent(ProfileActivity.this, HistoryActivity.class);
-//                            profileActivityIntent.putExtra("email", currEmail);
-//                            startActivity(profileActivityIntent);
-//                        }
-//                    });
-//                }
-//            }
-//        });
-//    }
-//
-//
-//    //Log Out Button Function
-//    protected void logout(){
-//        Intent intent = new Intent(ProfileActivity.this, LogInActivity.class);
-//        intent.putExtra("email", "");
-//        startActivity(intent);
-//    }
-//
-//    //Delete Account Function
-//    protected void deleteAccount(){
-//        db.collection("users").document(currUser.getEmail())//temp, ask Ashna about this
-//                .delete()
-//                .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                    @Override
-//                    public void onSuccess(Void aVoid) {
-//                        Log.d("test", "DocumentSnapshot successfully deleted!");
-//                        //redirect to the home screen after logging out
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Log.w("test", "Error deleting document", e);
-//                    }
-//                });
-//
-//        Intent intent = new Intent(ProfileActivity.this, LogInActivity.class);
-//        intent.putExtra("email", "");
-//        startActivity(intent);
-//    }
-//
-//    //Edit Profile Picture Function
-//    protected void editProfilePic(){
-//
-//        Log.d("test", picLink);
-//        Picasso.get().load(picLink).into(profilePicView, new Callback() {
-//            @Override
-//            public void onSuccess() { DocumentReference currDoc = db.collection("users").document(currEmail);
-//                currDoc.update("profilePicture", picLink)
-//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                            @Override
-//                            public void onSuccess(Void aVoid) {
-//                                Log.d("Doc", "DocumentSnapshot successfully written!");
-//                            }
-//                        })
-//                        .addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception e) {
-//                                Log.w("Doc", "Error writing document", e);
-//                            }
-//                        });
-//                //edit profile pic link in D
-//            }
-//            @Override
-//            public void onError(Exception e) {
-//                Picasso.get().load("https://raw.githubusercontent.com/lindshuang/image-store/main/error_profile_pic.png").into(profilePicView);
-//            }
-//        });
-//
-//        //https://ctcusc.com/images/headshots/ctc-lindsay.jpg
-//    }
-//
-//    //Edit Profile Pic Pop-up
-////    public AlertDialog onCreateDialog() {
-////        builder = new AlertDialog.Builder(this);
-////        LayoutInflater inflater = getLayoutInflater(); // Get the layout inflater
-////        final View view = inflater.inflate(R.layout.dialog_edit_pic, null);
-////        final EditText picEditText = view.findViewById(R.id.img_link);
-////        final TextView error_text = view.findViewById(R.id.error_text);
-////
-////                // Inflate and set the layout for the dialog, pass null as the parent view because its going in the dialog layout
-////        builder.setView(view)
-////                // Add action buttons
-////                .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-////                    @Override
-////                    public void onClick(DialogInterface dialog, int id) {
-////                        picLink = picEditText.getText().toString();
-////                        if(picLink.length() <= 0){
-////                            error_text.setVisibility(View.VISIBLE);
-////                            error_text.setText("Email Address not found");
-////                            Log.d("document", "no link!");
-////                        }else{
-////                            editProfilePic(picLink);
-////                        }
-////                    }
-////                })
-////                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-////                    public void onClick(DialogInterface dialog, int id) {
-////                        dialog.cancel();
-////                    }
-////                });
-////        return builder.create();
-////    }
-//}
 package cs310.trojancheckinout;
 
 import androidx.annotation.NonNull;
@@ -307,6 +9,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -326,9 +29,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -338,12 +45,14 @@ import java.util.Date;
 import java.util.Formatter;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.UUID;
 
 import cs310.trojancheckinout.models.Building;
 import cs310.trojancheckinout.models.User;
 
 public class ProfileActivity extends AppCompatActivity {
 
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
     private ImageView profilePicView;
     private FirebaseFirestore db;
     private User currUser;
@@ -581,6 +290,7 @@ public class ProfileActivity extends AppCompatActivity {
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
                 profilePicView.setImageBitmap(bitmap);
+                uploadPic(); //call upload pic function to upload to firebase storage
             } catch (FileNotFoundException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -591,7 +301,50 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    protected void uploadPic(){
+        profilePicView.setDrawingCacheEnabled(true);
+        profilePicView.buildDrawingCache();
+        Bitmap bitmap = ((BitmapDrawable) profilePicView.getDrawable()).getBitmap();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] data = baos.toByteArray();
 
+        //create upload task
+        String path = "profilepics/" + UUID.randomUUID() + ".png";
+        Log.d("Doc", "storage path: " + path);
+        StorageReference profilePicRef = storage.getReference(path);
+        UploadTask uploadTask = profilePicRef.putBytes(data);
+
+        uploadTask.addOnSuccessListener(ProfileActivity.this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                profilePicRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Uri downloadUrl = uri;
+                        String urlString = downloadUrl.toString();
+                        Log.d("Doc", "download URL: " + urlString);
+
+                        //upload into firebase Storage
+                        DocumentReference currDoc = db.collection("users").document(currEmail);
+                        currDoc.update("profilePicture", urlString)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d("Doc", "DocumentSnapshot successfully written!");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w("Doc", "Error writing document", e);
+                                }
+                            });
+                    }
+                });
+            }
+        });
+    }
 
     //Log Out Button Function
     protected void logout(){
@@ -629,7 +382,8 @@ public class ProfileActivity extends AppCompatActivity {
         Log.d("test", picLink);
         Picasso.get().load(picLink).into(profilePicView, new Callback() {
             @Override
-            public void onSuccess() { DocumentReference currDoc = db.collection("users").document(currEmail);
+            public void onSuccess() {
+                DocumentReference currDoc = db.collection("users").document(currEmail);
                 currDoc.update("profilePicture", picLink)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
