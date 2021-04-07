@@ -96,6 +96,17 @@
             android:textSize="14sp" />
 
         <Button
+            android:id="@+id/csv_button_temp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="0dp"
+            android:text="CSV"
+            android:textAlignment="viewStart"
+            android:textColor="#4D98A1"
+            android:textSize="14sp" />
+
+        <Button
             android:id="@+id/button_view_history"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"

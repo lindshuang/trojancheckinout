@@ -125,6 +125,8 @@ public class ProfileActivity extends AppCompatActivity {
                     Button deleteAccount = findViewById(R.id.button_delete_account);
                     Button checkoutButton = findViewById(R.id.button_checkout_profile);
                     Button editProfileGalleryButton = findViewById(R.id.button_edit_pic_gallery);
+                    //temp
+                    Button csvButton = findViewById(R.id.csv_button_temp);
 
                     if (currUser.isChecked_in()){
                         checkoutButton.setVisibility(View.VISIBLE);
@@ -234,6 +236,15 @@ public class ProfileActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             logout();
+                        }
+                    });
+
+                    //Click CSV BUTTON(TEMP)
+                    csvButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent profileActivityIntent = new Intent(ProfileActivity.this, CsvActivity.class);
+                            startActivity(profileActivityIntent);
                         }
                     });
 
