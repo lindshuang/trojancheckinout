@@ -68,8 +68,6 @@ public class CsvActivity extends AppCompatActivity {
                     Log.d("Doc", "record: " + Arrays.asList(values));
                     records.add(Arrays.asList(values));
                 }
-
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
