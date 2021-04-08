@@ -51,6 +51,16 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/text_view_checkin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:paddingBottom="14dp"
+            android:text="Currently checked"
+            android:textColor="#5E9460"
+            android:textSize="14sp" />
+
+        <TextView
             android:id="@+id/text_view_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -93,17 +103,6 @@
             android:textAlignment="viewStart"
             android:visibility="invisible"
             android:textColor="#5E9460"
-            android:textSize="14sp" />
-
-        <Button
-            android:id="@+id/csv_button_temp"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="0dp"
-            android:text="CSV"
-            android:textAlignment="viewStart"
-            android:textColor="#4D98A1"
             android:textSize="14sp" />
 
         <Button

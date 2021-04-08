@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -125,8 +126,6 @@ public class ProfileActivity extends AppCompatActivity {
                     Button deleteAccount = findViewById(R.id.button_delete_account);
                     Button checkoutButton = findViewById(R.id.button_checkout_profile);
                     Button editProfileGalleryButton = findViewById(R.id.button_edit_pic_gallery);
-                    //temp
-                    Button csvButton = findViewById(R.id.csv_button_temp);
 
                     if (currUser.isChecked_in()){
                         checkoutButton.setVisibility(View.VISIBLE);
@@ -138,6 +137,7 @@ public class ProfileActivity extends AppCompatActivity {
                     TextView studentIDView = findViewById(R.id.text_view_id);
                     TextView majorView = findViewById(R.id.text_view_major);
                     TextView occupationView = findViewById(R.id.text_view_project_role);
+                    TextView checkedIn = findViewById(R.id.text_view_checkin);
                     profilePicView = findViewById(R.id.image_view_pic);
 
                     //Display Data
@@ -152,6 +152,52 @@ public class ProfileActivity extends AppCompatActivity {
                     final String profilePic = currUser.getProfilePicture();
                     Picasso.get().load(profilePic).into(profilePicView);
                     //qrCode = currUser.getCurrent_qr();
+
+                    //Get Current Checked in Building for User and display
+                    DocumentReference docIdRef = db.collection("users").document(currEmail);
+                    docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                List<String> histories = (List<String>) document.get("histories");
+                                if (!document.exists()) {
+                                    Log.d("document", "Document does not exist!");
+                                }
+                                else {
+                                    Log.d("Document", "Document exists!");
+                                    //look at last object in list of histories
+                                    int history_size = histories.size();
+                                    if(history_size > 0 && histories != null) {
+                                        String last_history = histories.get(histories.size()-1); //1anyanutakki@usc.edu
+                                        Log.d("Last history", "Last History is " + last_history);
+                                        //check histories collection by passing in concatenated email
+                                        DocumentReference docIdRef = db.collection("history").document(last_history);
+                                        docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    DocumentSnapshot document = task.getResult();
+                                                    String last_building = document.getString("buildingName");
+
+                                                    //UPDATE UI
+                                                    if (currUser.isChecked_in()){
+                                                        checkedIn.setText("Currently Checked Into " + last_building);
+                                                    }else{
+                                                        checkedIn.setText("Currently Checked Out");
+                                                    }
+                                                } else {
+                                                    Log.d("document", "Failed with: ", task.getException());
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            } else {
+                                Log.d("document", "Failed with: ", task.getException());
+                            }
+                        }
+                    });
 
                     //Dialog for Picture Link
                     final AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this)
@@ -240,13 +286,13 @@ public class ProfileActivity extends AppCompatActivity {
                     });
 
                     //Click CSV BUTTON(TEMP)
-                    csvButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent profileActivityIntent = new Intent(ProfileActivity.this, CsvActivity.class);
-                            startActivity(profileActivityIntent);
-                        }
-                    });
+//                    csvButton.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            Intent profileActivityIntent = new Intent(ProfileActivity.this, CsvActivity.class);
+//                            startActivity(profileActivityIntent);
+//                        }
+//                    });
 
                     //Click Delete Account Button
                     deleteAccount.setOnClickListener(new View.OnClickListener() {

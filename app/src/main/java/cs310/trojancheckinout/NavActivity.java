@@ -61,8 +61,10 @@ public class NavActivity extends AppCompatActivity {
                     role = userDoc.getString("occupation");
                     if(role.compareTo("Manager")==0) {
                         showBuildingsButton.setVisibility(View.VISIBLE);
+                        csvButton.setVisibility(View.VISIBLE);
                     } else {
                         showBuildingsButton.setVisibility(View.INVISIBLE);
+                        csvButton.setVisibility(View.INVISIBLE);
                     }
                 }
             }
