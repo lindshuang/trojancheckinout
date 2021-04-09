@@ -5,11 +5,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -27,7 +32,13 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,12 +46,14 @@ import java.util.Date;
 import java.util.Formatter;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.UUID;
 
 import cs310.trojancheckinout.models.Building;
 import cs310.trojancheckinout.models.User;
 
 public class ProfileActivity extends AppCompatActivity {
 
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
     private ImageView profilePicView;
     private FirebaseFirestore db;
     private User currUser;
@@ -50,7 +63,7 @@ public class ProfileActivity extends AppCompatActivity {
     private String picLink;
     private DocumentSnapshot userDoc;
     public static String QR_test;
-    ///private EditText picEditText;
+    public static final int GET_FROM_GALLERY = 3;
 
     private TextView isDeletedView;
 
@@ -135,6 +148,7 @@ public class ProfileActivity extends AppCompatActivity {
                     Button deleteAccount = findViewById(R.id.button_delete_account);
                     Button checkoutButton = findViewById(R.id.button_checkout_profile);
                     Button changePassword = findViewById(R.id.button_change_password);
+                    Button editProfileGalleryButton = findViewById(R.id.button_edit_pic_gallery);
 
                     if (currUser.isChecked_in()){
                         checkoutButton.setVisibility(View.VISIBLE);
@@ -148,6 +162,7 @@ public class ProfileActivity extends AppCompatActivity {
                     TextView occupationView = findViewById(R.id.text_view_project_role);
                     TextView isDeletedView = findViewById(R.id.textview_isdeleted);
                     profilePicView = findViewById(R.id.image_view_pic);
+                    TextView checkedIn2 = findViewById(R.id.text_view_checkin);
 
                     //set non-Current User view
                     if(!isCurrUser){
@@ -156,6 +171,7 @@ public class ProfileActivity extends AppCompatActivity {
                         checkoutButton.setVisibility(View.INVISIBLE);
                         editProfileButton.setVisibility(View.INVISIBLE);
                         changePassword.setVisibility(View.INVISIBLE);
+                        editProfileGalleryButton.setVisibility(View.INVISIBLE);
                     }
                     // Set isDeleted view
                     if(isuserDeleted){
@@ -165,6 +181,7 @@ public class ProfileActivity extends AppCompatActivity {
                         checkoutButton.setVisibility(View.INVISIBLE);
                         editProfileButton.setVisibility(View.INVISIBLE);
                         changePassword.setVisibility(View.INVISIBLE);
+                        editProfileGalleryButton.setVisibility(View.INVISIBLE);
                     }else{
                         isDeletedView.setVisibility(View.INVISIBLE);
                     }
@@ -176,11 +193,56 @@ public class ProfileActivity extends AppCompatActivity {
                     studentIDView.setText("Student ID: " + currUser.getStudentID());
 
                     //set as invisible if manager
-                    //majorView.setText("Major: " + "Computer Science");
+
                     occupationView.setText(currUser.getOccupation());
                     final String profilePic = currUser.getProfilePicture();
                     Picasso.get().load(profilePic).into(profilePicView);
-                    //qrCode = currUser.getCurrent_qr();
+
+                    //Get Current Checked in Building for User and display
+                    DocumentReference docIdRef = db.collection("users").document(currEmail);
+                    docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                List<String> histories = (List<String>) document.get("histories");
+                                if (!document.exists()) {
+                                    Log.d("document", "Document does not exist!");
+                                }
+                                else {
+                                    Log.d("Document", "Document exists!");
+                                    //look at last object in list of histories
+                                    int history_size = histories.size();
+                                    if(history_size > 0 && histories != null) {
+                                        String last_history = histories.get(histories.size()-1); //1anyanutakki@usc.edu
+                                        Log.d("Last history", "Last History is " + last_history);
+                                        //check histories collection by passing in concatenated email
+                                        DocumentReference docIdRef = db.collection("history").document(last_history);
+                                        docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    DocumentSnapshot document = task.getResult();
+                                                    String last_building = document.getString("buildingName");
+
+                                                    //UPDATE UI
+                                                    if (currUser.isChecked_in()){
+                                                        checkedIn2.setText("Currently Checked Into " + last_building);
+                                                    }else{
+                                                        checkedIn2.setText("Currently Checked Out");
+                                                    }
+                                                } else {
+                                                    Log.d("document", "Failed with: ", task.getException());
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            } else {
+                                Log.d("document", "Failed with: ", task.getException());
+                            }
+                        }
+                    });
 
                     //Dialog for Picture Link
                     final AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this)
@@ -289,6 +351,15 @@ public class ProfileActivity extends AppCompatActivity {
                         }
                     });
 
+
+                    //Click Edit Profile Pic from Gallery
+                    editProfileGalleryButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
+                        }
+                    });
+
                     //Click check out button
                     checkoutButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -300,6 +371,75 @@ public class ProfileActivity extends AppCompatActivity {
 
                     });
                 }
+            }
+        });
+    }
+
+
+    //Edit Profile Pic from Gallery
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //Detects request codes
+        if(requestCode==GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
+            Uri selectedImage = data.getData();
+            Bitmap bitmap = null;
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                profilePicView.setImageBitmap(bitmap);
+                uploadPic(); //call upload pic function to upload to firebase storage
+            } catch (FileNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
+    protected void uploadPic(){
+        profilePicView.setDrawingCacheEnabled(true);
+        profilePicView.buildDrawingCache();
+        Bitmap bitmap = ((BitmapDrawable) profilePicView.getDrawable()).getBitmap();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        //create upload task
+        String path = "profilepics/" + UUID.randomUUID() + ".png";
+        Log.d("Doc", "storage path: " + path);
+        StorageReference profilePicRef = storage.getReference(path);
+        UploadTask uploadTask = profilePicRef.putBytes(data);
+
+        uploadTask.addOnSuccessListener(ProfileActivity.this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                profilePicRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Uri downloadUrl = uri;
+                        String urlString = downloadUrl.toString();
+                        Log.d("Doc", "download URL: " + urlString);
+
+                        //upload into firebase Storage
+                        DocumentReference currDoc = db.collection("users").document(currEmail);
+                        currDoc.update("profilePicture", urlString)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d("Doc", "DocumentSnapshot successfully written!");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w("Doc", "Error writing document", e);
+                                    }
+                                });
+                    }
+                });
             }
         });
     }

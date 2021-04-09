@@ -63,6 +63,15 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/text_view_checkin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:paddingBottom="14dp"
+            android:text="Currently checked"
+            android:textColor="#5E9460"
+            android:textSize="14sp" />
+        <TextView
             android:id="@+id/text_view_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -125,6 +134,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Edit Profile Picture"
+            android:padding="0dp"
+            android:textColor="#4D98A1"
+            android:textAlignment="viewStart"
+            android:textSize="14sp"
+            />
+        <Button
+            android:id="@+id/button_edit_pic_gallery"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Profile Picture from Gallery"
             android:padding="0dp"
             android:textColor="#4D98A1"
             android:textAlignment="viewStart"

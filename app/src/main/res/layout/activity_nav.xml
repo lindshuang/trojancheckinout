@@ -53,6 +53,20 @@
             android:layout_marginHorizontal="10dp"
             android:layout_marginBottom="20dp"/>
 
+        <Button
+            android:id="@+id/csv_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CSV"
+            android:layout_marginTop="50dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/errortxt"/>
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 
