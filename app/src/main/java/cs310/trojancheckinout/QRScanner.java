@@ -467,9 +467,8 @@ public class QRScanner extends AppCompatActivity {
             String timeInDate = SDF.format(date);
 
             Formatter timeInT = new Formatter();
-            Calendar gfg_calender = Calendar.getInstance(TimeZone.getTimeZone("PST"));
-            //timeInT = new Formatter();
-            timeInT.format("%tl:%tM", gfg_calender, gfg_calender);
+            Calendar gfg_calender = Calendar.getInstance(TimeZone.getTimeZone("GMT-7"));
+            timeInT.format("%tH:%tM", gfg_calender, gfg_calender);
             String timeInTime = String.valueOf(timeInT);
             Log.d("times",timeInTime+timeInDate);
 
@@ -730,6 +729,7 @@ public class QRScanner extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     String timeIn_db2 = document.getString("timeInTime");
+                    Log.d("time in from database","timeIndb"+timeIn_db2);
 
                     if (!document.exists()) {
                         Log.d("document", "Document does not exist! in check in function");
@@ -748,19 +748,19 @@ public class QRScanner extends AppCompatActivity {
                         Log.d("time out date", "time Out Date "+ timeOutDate);
 
                         Formatter timeOutT = new Formatter();
-                        Calendar gfg_calender = Calendar.getInstance(TimeZone.getTimeZone("PST"));
-                        timeOutT.format("%tl:%tM", gfg_calender, gfg_calender);
+                        Calendar gfg_calender = Calendar.getInstance(TimeZone.getTimeZone("GMT-7"));
+                        timeOutT.format("%tH:%tM", gfg_calender, gfg_calender);
                         String timeOutTime = String.valueOf(timeOutT);
                         Log.d("time out date", "time Out Time "+ timeOutTime);
 
                         //calculate time elapsed
                         try {
                             Log.d("try", "went into try");
-                            SimpleDateFormat format = new SimpleDateFormat("hh:mm");
+                            SimpleDateFormat format = new SimpleDateFormat("HH:mm");
                             Date date1 = format.parse(timeIn_db);
-                            Log.d("date1","date1");
+                            Log.d("date1","date1"+date1);
                             Date date2 = format.parse(timeOutTime);
-                            Log.d("date1","date2");
+                            Log.d("date1","date2"+date2);
                             long difference = date2.getTime() - date1.getTime();
                             Log.d("date1","diff");
                             timeElapsed = (double)difference/60000;

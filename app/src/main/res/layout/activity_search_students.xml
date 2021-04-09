@@ -171,11 +171,11 @@
         android:padding="10dp">
 
         <TextView
-            android:id="@+id/hours_search_text"
+            android:id="@+id/hours_start_search_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:text="Hours: "
+            android:text="Start Time: "
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -185,7 +185,42 @@
             app:layout_constraintTop_toBottomOf="@id/last_search_text" />
 
         <EditText
-            android:id="@+id/hours_search_edit"
+            android:id="@+id/hours_start_search_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/last_search_text" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="244dp"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <TextView
+            android:id="@+id/hours_end_search_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:text="End Time: "
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/last_search_edit"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/last_search_text" />
+
+        <EditText
+            android:id="@+id/hours_end_search_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
@@ -197,7 +232,7 @@
         android:id="@+id/linearLayout5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="244dp"
+        android:layout_marginBottom="196dp"
         android:orientation="horizontal"
         android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -223,7 +258,7 @@
             android:id="@+id/major_search_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/majors"/>
+            android:entries="@array/majors" />
 
     </LinearLayout>
 
@@ -233,7 +268,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="96dp"
+        android:layout_marginTop="160dp"
         android:layout_marginEnd="30dp"
         android:background="@drawable/roundedbutton"
         android:text="Search Students"

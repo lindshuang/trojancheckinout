@@ -18,6 +18,8 @@ public class User {
 
     private String current_qr;
 
+    private boolean is_deleted;
+
     public User(){
         firstName = "";
         lastName = "";
@@ -27,6 +29,7 @@ public class User {
         occupation = "";
         histories = new ArrayList<>();
         current_qr = "";
+        is_deleted = false;
     }
     public User(String firstName, String lastName, String email, String password, boolean checked_in) {
         this.firstName = firstName;
@@ -36,6 +39,7 @@ public class User {
         this.checked_in = checked_in;
         this.profilePicture = "https://st.depositphotos.com/1779253/5140/v/600/depositphotos_51405259-stock-illustration-male-avatar-profile-picture-use.jpg";
         this.current_qr = "";
+        is_deleted = false;
     }
     // For Student
     public User(String fN, String lN,String eml,String pswd, String stuID, String major){
@@ -49,6 +53,7 @@ public class User {
         checked_in = false;
         profilePicture = "https://st.depositphotos.com/1779253/5140/v/600/depositphotos_51405259-stock-illustration-male-avatar-profile-picture-use.jpg";
         current_qr = "";
+        is_deleted = false;
     }
     // For Manager
     public User(String fN, String lN,String eml,String pswd){
@@ -62,6 +67,7 @@ public class User {
         checked_in = false;
         profilePicture = "https://st.depositphotos.com/1779253/5140/v/600/depositphotos_51405259-stock-illustration-male-avatar-profile-picture-use.jpg";
         current_qr = "";
+        is_deleted = false;
     }
 
     public User(String firstName, String lastName, String email, String password, boolean checked_in, String occupation, String studentID, String profilePicture, String current_qr) {
@@ -74,6 +80,7 @@ public class User {
         this.studentID = studentID;
         this.profilePicture = profilePicture;
         this.current_qr = current_qr;
+        is_deleted = false;
     }
 
     public String getFirstName() {
@@ -155,5 +162,14 @@ public class User {
     public void setCurrent_qr(String current_qr) {
         this.current_qr = current_qr;
     }
+
+    public boolean isIs_deleted() {
+        return is_deleted;
+    }
+
+    public void setIs_deleted(boolean is_deleted) {
+        this.is_deleted = is_deleted;
+    }
+
 
 }

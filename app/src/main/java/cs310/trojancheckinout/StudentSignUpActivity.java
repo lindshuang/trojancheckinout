@@ -157,11 +157,12 @@ public class StudentSignUpActivity  extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 major = adapterView.getItemAtPosition(i).toString();
+
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                //majors.setError("Enter Major");
+               // errorTexts.setText("Please select major");
             }
         });
 
@@ -173,15 +174,25 @@ public class StudentSignUpActivity  extends AppCompatActivity {
                 lastName = lastNameEdit.getText().toString();
                 email = emailEdit.getText().toString();
                 password = passwordEdit.getText().toString();
-                major = majors.getSelectedItem().toString();
                 studentID = studentIDEdit.getText().toString();
+                major = majors.getSelectedItem().toString();
 
-                User user = new User(firstName, lastName, email, password, studentID, major);
-                db.collection("users").document(email).set(user);
+                if(major.compareTo("")==0){
+                    errorTexts.setText("Please select major");
+                }
+                else{
+                    errorTexts.setText("");
+
+                    User user = new User(firstName, lastName, email, password, studentID, major);
+                    db.collection("users").document(email).set(user);
 
 
-                Intent intent = new Intent(StudentSignUpActivity.this, LogInActivity.class);
-                startActivityForResult(intent, 0);
+                    Intent intent = new Intent(StudentSignUpActivity.this, LogInActivity.class);
+                    startActivityForResult(intent, 0);
+                }
+
+
+
             }
         });
 

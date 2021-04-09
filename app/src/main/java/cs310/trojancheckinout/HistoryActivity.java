@@ -56,9 +56,22 @@ public class HistoryActivity extends AppCompatActivity {
 
         //get user email
 //        Intent historyIntent = getIntent();
-//        bundle = getIntent().getExtras();
+        bundle = getIntent().getExtras();
         //currEmail = bundle.getString("email");
-        currEmail = sharedData.getCurr_email();
+        currEmail = bundle.getString("email");
+//        if(bundle.getString("Source") != null){
+//            Log.d("DEBUG", "it's not null");
+//            String potCurrEmail = bundle.getString("Source");
+//            if(potCurrEmail.compareTo("Occupants") == 0){
+//                Log.d("DEBUG", "it's coming from occupants");
+//                currEmail = bundle.getString("email");
+//                Log.d("DEBUG", currEmail);
+//            }
+//        } else {
+//            //currEmail = bundle.getString("email"); //uncomment when you pass in bundle
+//            currEmail = sharedData.getCurr_email();
+//        }
+       // currEmail = sharedData.getCurr_email();
 
         DocumentReference docIdRef = db.collection("users").document(currEmail);
         docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

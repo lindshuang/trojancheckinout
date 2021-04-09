@@ -15,7 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".displaySearchResults"></activity>
+        <activity android:name=".EditCapacity"></activity>
+        <activity android:name=".ShowOccupantsActivity" />
+        <activity android:name=".displaySearchResults" />
         <activity android:name=".SearchStudents" />
         <activity android:name=".generateQRActivity" />
         <activity android:name=".NavActivity" />

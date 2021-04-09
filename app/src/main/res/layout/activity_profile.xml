@@ -39,6 +39,17 @@
             android:layout_toEndOf="@id/image_view_pic"
             android:text="Student"
             android:textSize="18sp" />
+        <TextView
+            android:id="@+id/textview_isdeleted"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_project_role"
+            android:layout_marginTop="4dp"
+            android:layout_toEndOf="@id/image_view_pic"
+            android:text="Account Deleted"
+            android:textColor="#ff0000"
+            android:textSize="15sp"
+            android:visibility="invisible"/>
 
     </RelativeLayout>
 

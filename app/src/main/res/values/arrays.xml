@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="majors">
+        <item></item>
         <item>Computer Science</item>
         <item>Mechanical Engineering</item>
         <item>Business</item>
@@ -9,6 +10,7 @@
         <item>Political Science</item>
     </string-array>
     <string-array name="buildings">
+        <item></item>
         <item>CI</item>
         <item>DHE</item>
         <item>SAL</item>

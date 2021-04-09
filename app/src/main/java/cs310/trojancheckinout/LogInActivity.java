@@ -90,6 +90,7 @@ public class LogInActivity  extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
                             String pswd = document.getString("password");
+                            boolean is_deleted = document.getBoolean("is_deleted");
                             if (!document.exists()) {
                                 error_text.setVisibility(View.VISIBLE);
                                 error_text.setText("Email Address not found");
@@ -100,6 +101,11 @@ public class LogInActivity  extends AppCompatActivity {
                                 error_text.setVisibility(View.VISIBLE);
                                 error_text.setText("Password does not match");
                                 Log.d("document", "password is wrong");
+                            }
+                            else if(is_deleted){
+                                error_text.setVisibility(View.VISIBLE);
+                                error_text.setText("Account has been deleted");
+                                Log.d("document", "account is deleted");
                             }
                             else {
                                 Intent intent = new Intent(LogInActivity.this, NavActivity.class);

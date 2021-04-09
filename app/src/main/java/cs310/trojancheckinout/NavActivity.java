@@ -40,8 +40,10 @@ public class NavActivity extends AppCompatActivity {
                     role = userDoc.getString("occupation");
                     if(role.compareTo("Manager")==0) {
                         showBuildingsButton.setVisibility(View.VISIBLE);
+                        searchStudentsButton.setVisibility(View.VISIBLE);
                     } else {
                         showBuildingsButton.setVisibility(View.INVISIBLE);
+                        searchStudentsButton.setVisibility(View.INVISIBLE);
                     }
                 }
             }
@@ -55,6 +57,7 @@ public class NavActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent profileActivityIntent = new Intent(NavActivity.this, ProfileActivity.class);
+                profileActivityIntent.putExtra("Source","CurrUser");
                 startActivityForResult(profileActivityIntent, 0);
             }
         });
