@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -84,6 +85,16 @@ public class ProfileActivity extends AppCompatActivity {
     double timeElapsed=0.0;
 
     boolean isCurrUser = true;
+
+    //Pop-Up Check Out
+    LinearLayout pop_up_id;
+    Button confirmCheck_b_id;
+    Button cancel_b_id;
+
+    //Pop-Up Delete
+    LinearLayout delete_pop_up_id;
+    Button confirmDelete_b_id;
+    Button cancelDelete_b_id;
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -149,6 +160,15 @@ public class ProfileActivity extends AppCompatActivity {
                     Button checkoutButton = findViewById(R.id.button_checkout_profile);
                     Button changePassword = findViewById(R.id.button_change_password);
                     Button editProfileGalleryButton = findViewById(R.id.button_edit_pic_gallery);
+                    Button confirmCheck_b_id = findViewById(R.id.confirmCheckButton);
+                    Button cancel_b_id = findViewById(R.id.cancelButton);
+                    Button confirmDelete_b_id = findViewById(R.id.confirmDeleteButton);
+                    Button cancelDelete_b_id = findViewById(R.id.cancelDeleteButton);
+
+                    //pop up
+                    pop_up_id = (LinearLayout) findViewById(R.id.pop_up);
+                    delete_pop_up_id = (LinearLayout) findViewById(R.id.delete_pop_up);
+
 
                     if (currUser.isChecked_in()){
                         checkoutButton.setVisibility(View.VISIBLE);
@@ -334,10 +354,27 @@ public class ProfileActivity extends AppCompatActivity {
                     deleteAccount.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            deleteAccount();
+                            delete_pop_up_id.setVisibility(View.VISIBLE);
+
                         }
                     });
 
+                    //DELETE POPUP: on clicking confirm
+                    confirmDelete_b_id.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            delete_pop_up_id.setVisibility(View.INVISIBLE);
+                            deleteAccount();
+
+                        }
+                    });
+
+                    //DELETE POPUP: on clicking cancel
+                    cancelDelete_b_id.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            delete_pop_up_id.setVisibility(View.INVISIBLE);
+                        }
+                    });
                     //Click View History Button
                     viewHistory.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -364,12 +401,36 @@ public class ProfileActivity extends AppCompatActivity {
                     checkoutButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            checkOut();
-                            Intent checkOutIntent = new Intent(ProfileActivity.this, CheckIn.class);
-                            startActivity(checkOutIntent);
+                            pop_up_id.setVisibility(View.VISIBLE);
+
                         }
 
                     });
+
+                    //CHECKOUT POPUP: on clicking confirm
+                    confirmCheck_b_id.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            pop_up_id.setVisibility(View.INVISIBLE);
+
+                            checkOut();
+
+
+                            //navigate back to checkin page
+                            Intent checkOutIntent = new Intent(ProfileActivity.this, CheckIn.class);
+                            startActivityForResult(checkOutIntent, 0);
+                        }
+                    });
+
+                    //CHECKOUT POPUP: on clicking cancel
+                    cancel_b_id.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            pop_up_id.setVisibility(View.INVISIBLE);
+                        }
+                    });
+
+
+
                 }
             }
         });
@@ -611,15 +672,15 @@ public class ProfileActivity extends AppCompatActivity {
                         Log.d("time out date", "time Out Date "+ timeOutDate);
 
                         Formatter timeOutT = new Formatter();
-                        Calendar gfg_calender = Calendar.getInstance(TimeZone.getTimeZone("PST"));
-                        timeOutT.format("%tl:%tM", gfg_calender, gfg_calender);
+                        Calendar gfg_calender = Calendar.getInstance(TimeZone.getTimeZone("GMT-7"));
+                        timeOutT.format("%tH:%tM", gfg_calender, gfg_calender);
                         String timeOutTime = String.valueOf(timeOutT);
                         Log.d("time out date", "time Out Time "+ timeOutTime);
 
                         //calculate time elapsed
                         try {
                             Log.d("try", "went into try");
-                            SimpleDateFormat format = new SimpleDateFormat("hh:mm");
+                            SimpleDateFormat format = new SimpleDateFormat("HH:mm");
                             Date date1 = format.parse(timeIn_db);
                             Log.d("date1","date1");
                             Date date2 = format.parse(timeOutTime);

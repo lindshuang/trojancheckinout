@@ -136,6 +136,9 @@ public class StudentSignUpActivity  extends AppCompatActivity {
                 if(password.length() <= 1){
                     passwordEdit.setError("Enter Password");
                 }
+                else if(password.length() < 4) {
+                    passwordEdit.setError("Password needs to be at least 4 characters long");
+                }
                 return true;
             }
         });
@@ -157,12 +160,11 @@ public class StudentSignUpActivity  extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 major = adapterView.getItemAtPosition(i).toString();
-
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-               // errorTexts.setText("Please select major");
+                //majors.setError("Enter Major");
             }
         });
 
@@ -174,24 +176,39 @@ public class StudentSignUpActivity  extends AppCompatActivity {
                 lastName = lastNameEdit.getText().toString();
                 email = emailEdit.getText().toString();
                 password = passwordEdit.getText().toString();
-                studentID = studentIDEdit.getText().toString();
                 major = majors.getSelectedItem().toString();
+                studentID = studentIDEdit.getText().toString();
 
-                if(major.compareTo("")==0){
-                    errorTexts.setText("Please select major");
+                if(firstName.length() <= 1){
+                    firstNameEdit.setError("Enter FirstName");
                 }
-                else{
-                    errorTexts.setText("");
+                if(email.length() <= 1){
+                    emailEdit.setError("Enter Email Address");
+                }
+                if(!email.contains("@usc.edu")){
+                    emailEdit.setError("Enter USC Email Address");
+                }
+                if(lastName.length() <= 1){
+                    lastNameEdit.setError("Enter LastName");
+                }
+                if(password.length() <= 1){
+                    passwordEdit.setError("Enter Password");
+                }
+                if(password.length() < 4) {
+                    passwordEdit.setError("Password needs to be at least 4 characters long");
+                }
+                if(studentID.length() != 10){
+                    studentIDEdit.setError("Enter StudentID");
+                }
 
-                    User user = new User(firstName, lastName, email, password, studentID, major);
-                    db.collection("users").document(email).set(user);
 
+                User user = new User(firstName, lastName, email, password, studentID, major);
+                db.collection("users").document(email).set(user);
 
+                if(firstName.length() > 1 && email.length() > 1 && email.contains("usc.edu") && lastName.length() > 1 && password.length() >= 4 && studentID.length() == 10) {
                     Intent intent = new Intent(StudentSignUpActivity.this, LogInActivity.class);
                     startActivityForResult(intent, 0);
                 }
-
-
 
             }
         });
