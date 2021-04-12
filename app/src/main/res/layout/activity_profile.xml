@@ -182,7 +182,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
             android:paddingBottom="14dp"
-            android:text="Currently checked"
+            android:text=""
             android:textColor="#5E9460"
             android:textSize="14sp" />
         <TextView
