@@ -313,7 +313,7 @@ public class QRScanner extends AppCompatActivity {
                 if (check.compareTo("checked in") == 0)
                 {
                     checkedIn = true;
-                    confirm_pop_up_id.setText("Please confirm check out.");
+                    confirm_pop_up_id.setText("You are already checked in. Please confirm check out.");
                 }
                 else if (check.compareTo("checked out") == 0)
                 {

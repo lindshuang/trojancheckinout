@@ -27,6 +27,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import cs310.trojancheckinout.models.NameSorter;
@@ -99,6 +100,7 @@ public class SearchStudents extends AppCompatActivity {
                 buildingresult_emails.clear();
                 dateresult_emails.clear();
                 timeresult_emails.clear();
+                all_arrays.clear();
                 all_results.clear();
 
                 anchor =0;
@@ -158,6 +160,7 @@ public class SearchStudents extends AppCompatActivity {
                 if(date_search.length() !=0 || !(date_search.matches(""))) {
                     Character[] numbers = {'0','1','2','3','4','5','6','7','8','9'};
 
+
                     db.collection("history")
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -167,21 +170,26 @@ public class SearchStudents extends AppCompatActivity {
 
                                         for (QueryDocumentSnapshot document : task.getResult()) {
                                             int index =0;
+                                            boolean number_found = false;
                                             if(document.getString("timeInDate").compareTo(date_search)==0){
                                                String date_email = document.getId();
                                                for(int b=0;b<date_email.length();b++)
                                                {
-                                                   for(int c=0;c<numbers.length;c++){
-                                                       if(date_email.charAt(b) ==numbers[c]){
-                                                           ++index;
-                                                           break;
+                                                       number_found = false;
+                                                       for(int c=0;c<numbers.length;c++){
+                                                           if(date_email.charAt(b) ==numbers[c]){
+                                                               number_found = true;
+                                                               ++index;
+                                                               break;
 
+                                                           }
                                                        }
-                                                   }
-
+                                                       if(number_found==false){
+                                                           break;
+                                                       }
                                                }
                                                 String official_email = date_email.substring(index);
-                                               Log.d("official email","off"+ official_email);
+                                               Log.d("official email","off      "+ official_email);
                                                 dateresult_emails.add(official_email);
                                             }
 
@@ -218,7 +226,7 @@ public class SearchStudents extends AppCompatActivity {
                                             String startTime = document.getString("timeInTime");
                                             String endTime = document.getString("timeOutTime");
 
-                                            SimpleDateFormat format = new SimpleDateFormat("hh:mm");
+                                            SimpleDateFormat format = new SimpleDateFormat("HH:mm");
                                             Date hour_start_user_input =  new Date();
                                             Date hour_end_user_input = new Date();
                                             Date startTime_database = new Date();
@@ -237,10 +245,10 @@ public class SearchStudents extends AppCompatActivity {
                                             long hour_start_db = startTime_database.getTime();
                                             long hour_end_db =   endTime_database.getTime();
 
-                                            Log.d("hour start", "H "+hour_start_user_input);
-                                            Log.d("hour end", "H "+hour_end_user_input);
-                                            Log.d("hour start db","H "+startTime_database );
-                                            Log.d("hour end db", "H "+endTime_database);
+//                                            Log.d("hour start", "H "+hour_start_user_input);
+//                                            Log.d("hour end", "H "+hour_end_user_input);
+//                                            Log.d("hour start db","H "+startTime_database );
+//                                            Log.d("hour end db", "H "+endTime_database);
 
 //                                            Case 1: someone checks in after the start time and before the checkout time
 
@@ -273,17 +281,24 @@ public class SearchStudents extends AppCompatActivity {
                                         for(int b=0;b<temp_emails_hour.size();b++)
                                         {
                                             int index=0;
+                                            boolean number_found = false;
                                             for(int h=0;h< temp_emails_hour.get(b).length();h++) {
                                                 String tmp = temp_emails_hour.get(b);
+                                                number_found = false;
+                                                    for (int c = 0; c < numbers.length; c++) {
+                                                        if (tmp.charAt(h) ==numbers[c])
+                                                        {
+                                                            ++index;
+                                                            number_found = true;
+                                                            break;
 
-                                                for (int c = 0; c < numbers.length; c++) {
-                                                    if (tmp.charAt(h) ==numbers[c])
-                                                    {
-                                                        ++index;
-                                                        break;
-
+                                                        }
                                                     }
-                                                }
+                                                    if(number_found==false){
+                                                        break;
+                                                    }
+
+
                                             }
                                             timeresult_emails.add(temp_emails_hour.get(b).substring(index));
                                         }
@@ -402,7 +417,18 @@ public class SearchStudents extends AppCompatActivity {
         Log.d("acnhr","ANCHOR _" + anchor);
         Log.d("tag","all arrays size "+all_arrays.get(anchor).size());
 
-        //End with a pared down list of emails
+        //Edit all arrays.get (anchor) to remove duplicates
+        LinkedHashSet<String> set = new LinkedHashSet<String>();
+
+        for (int i = 0; i < all_arrays.get(anchor).size(); i++){
+            set.add(all_arrays.get(anchor).get(i));
+        }
+        all_arrays.get(anchor).clear();
+        for (String temp : set) {
+            all_arrays.get(anchor).add(temp);
+        }
+        set.clear();
+
 
         //get last name, first name combo
         db.collection("users")

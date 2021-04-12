@@ -234,7 +234,7 @@ public class ProfileActivity extends AppCompatActivity {
                                     //look at last object in list of histories
                                     int history_size = histories.size();
                                     if(history_size > 0 && histories != null) {
-                                        String last_history = histories.get(histories.size()-1); //1anyanutakki@usc.edu
+                                        String last_history = histories.get(histories.size() - 1); //1anyanutakki@usc.edu
                                         Log.d("Last history", "Last History is " + last_history);
                                         //check histories collection by passing in concatenated email
                                         DocumentReference docIdRef = db.collection("history").document(last_history);
@@ -246,9 +246,9 @@ public class ProfileActivity extends AppCompatActivity {
                                                     String last_building = document.getString("buildingName");
 
                                                     //UPDATE UI
-                                                    if (currUser.isChecked_in()){
+                                                    if (currUser.isChecked_in()) {
                                                         checkedIn2.setText("Currently Checked Into " + last_building);
-                                                    }else{
+                                                    } else {
                                                         checkedIn2.setText("Currently Checked Out");
                                                     }
                                                 } else {
@@ -256,6 +256,11 @@ public class ProfileActivity extends AppCompatActivity {
                                                 }
                                             }
                                         });
+                                    }
+                                    else{
+                                        if (!currUser.isIs_deleted()){
+                                            checkedIn2.setText("Currently Checked Out");
+                                        }
                                     }
                                 }
                             } else {
