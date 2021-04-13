@@ -123,16 +123,6 @@ public class ShowAllBuildingsActivity extends AppCompatActivity {
         ArrayList<String> occNames = new ArrayList<String>();
         String email;
 
-        void sendIntent(ArrayList<String> occEmails){
-            //intent
-            Log.d("debugging onclick", "right before intent declaration");
-            Intent intent = new Intent(ShowAllBuildingsActivity.this, ShowOccupantsActivity.class);
-            Log.d("debugging onclick", "after intent declaration");
-            intent.putExtra("occEmails", occEmails);
-            Log.d("debugging onclick", "after putting extra");
-            startActivity(intent);
-        }
-
 
         public BuildingViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -149,60 +139,11 @@ public class ShowAllBuildingsActivity extends AppCompatActivity {
                     Log.d("debugging onclick", "building name:" + bName);
                     Log.d("debugging onclick", "onclick: before database call");
 
-                    db.collection("buildings")
-                            .get()
-                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    Log.d("debugging onclick", "beginning of onComplete");
-                                    if (task.isSuccessful()) {
-                                        //going through documents in building collection
-                                        for (QueryDocumentSnapshot document : task.getResult()) {
-                                            Log.d("debugging onclick", "inside for loop " + document.getId() + " => " + document.getData());
-                                            //if building name matches name of onclick building
-                                            if (document.get("buildingName") == bName) {
-                                                //b is assigned to that building object
-                                                b = document.toObject(Building.class);
-                                                break;
-                                            }
-                                        }
-                                        Log.d("debugging onclick", "broke out of for loop, building name is " + b.getBuildingName());
-//
-                                    } else {
-                                        Log.d("debugging onclick", "identifyBuilding: couldn't get building documents: ", task.getException());
-                                    }
-                                    if (b == null){
-                                        Log.d("debugging onclick", "getOccupantNames: building is null, sending intent with empty array");
-                                        sendIntent(occ);
-                                    }
-                                    occ = (ArrayList<String>) b.getOccupants();
-                                    Log.d("debugging onclick", "getOccupantNames: after calling getOccupants");
-
-                                    if (occ == null){
-                                        Log.d("debugging onclick", "occ for " + b.getBuildingName() + " is null");
-                                        occEmails.add("None at this time");
-                                        sendIntent(occEmails);
-                                    }
-
-                                    //store emails of occupants currently checked in
-                                    Log.d("debugging onclick", "getOccupantNames: before getting occEmails");
-                                    for(int j = 0; j < occ.size(); j++){
-                                        String everyEmail = occ.get(j);
-                                        if(everyEmail.compareTo("0") < 0 || everyEmail.compareTo("0") > 0){
-                                            Log.d("debugging onclick", "looking at email# " + j + " which is " + occ.get(j));
-                                            Log.d("debugging onclick", "adding " + j + " " + occ.get(j) + " to occEmails" );
-                                            occEmails.add(occ.get(j));
-                                        }
-                                    }
-
-                                    Log.d("debugging onclick", "getOccupantNames: after getting occEmails");
-
-                                    Log.d("debugging onclick", "before sending intent");
-                                    sendIntent(occEmails);
-                                    occEmails.removeAll(occEmails);
-
-                                }
-                            });
+                    Intent intent = new Intent(ShowAllBuildingsActivity.this, ShowOccupantsActivity.class);
+                    Log.d("debugging onclick", "after intent declaration");
+                    intent.putExtra("building name", bName);
+                    Log.d("debugging onclick", "after putting extra");
+                    startActivity(intent);
                 }
 
             });
@@ -221,11 +162,6 @@ public class ShowAllBuildingsActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         adapter.startListening();
-    }
-
-    public void refreshButton(View view) {
-        Intent intent = new Intent(ShowAllBuildingsActivity.this, ShowAllBuildingsActivity.class);
-        startActivity(intent);
     }
 
 
