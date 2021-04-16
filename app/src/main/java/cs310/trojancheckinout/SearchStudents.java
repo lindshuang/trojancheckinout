@@ -52,6 +52,7 @@ public class SearchStudents extends AppCompatActivity {
     private EditText date_search_terms;
     private EditText start_time_search_terms;
     private EditText end_time_search_terms;
+    private EditText student_id_search_terms;
 
     //Database Reading -- Access a Cloud Firestore instance from your Activity
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -64,6 +65,7 @@ public class SearchStudents extends AppCompatActivity {
     private ArrayList<String> buildingresult_emails = new ArrayList<String>();
     private ArrayList<String> dateresult_emails = new ArrayList<String>();
     private ArrayList<String> timeresult_emails = new ArrayList<String>();
+    private ArrayList<String> studentID_emails = new ArrayList<String>();
     private ArrayList<String> names = new ArrayList<String>();
     private ArrayList<SearchUser> all_results = new ArrayList<SearchUser>();
     private ArrayList<ArrayList<String>> all_arrays = new ArrayList<ArrayList<String>>();
@@ -86,6 +88,7 @@ public class SearchStudents extends AppCompatActivity {
         date_search_terms = (EditText) findViewById(R.id.date_search_edit);
         start_time_search_terms = (EditText) findViewById(R.id.hours_start_search_edit);
         end_time_search_terms = (EditText) findViewById(R.id.hours_end_search_edit);
+        student_id_search_terms = (EditText) findViewById(R.id.student_id_search_edit);
 
 
         //ArrayList<String> names= new ArrayList<String>(Arrays.asList("Anya","Kenna","Shania","Karen","Ryan","Gauri","Tina","Ashna","Anya","Leah","Shania","Gina"));
@@ -100,6 +103,7 @@ public class SearchStudents extends AppCompatActivity {
                 buildingresult_emails.clear();
                 dateresult_emails.clear();
                 timeresult_emails.clear();
+                studentID_emails.clear();
                 all_arrays.clear();
                 all_results.clear();
 
@@ -112,6 +116,7 @@ public class SearchStudents extends AppCompatActivity {
                 String date_search = (date_search_terms.getText().toString());
                 String hour_start_search = start_time_search_terms.getText().toString();
                 String hour_end_search = end_time_search_terms.getText().toString();
+                String student_id_search = student_id_search_terms.getText().toString();
 
 
                 Log.d("fi",firstName_search+"fsearch");
@@ -121,6 +126,7 @@ public class SearchStudents extends AppCompatActivity {
                 Log.d("di",date_search+"building search");
                 Log.d("di",hour_start_search+ "start hrsearch");
                 Log.d("di",hour_end_search+"end hr search");
+                Log.d("di",student_id_search+"student_id_search");
 
                 if(building_search.length() !=0 || !(building_search.matches(""))) {
                     DocumentReference docIdRef2 = db.collection("buildings").document(building_search);
@@ -365,6 +371,20 @@ public class SearchStudents extends AppCompatActivity {
                                         }
                                         all_arrays.add(majorresult_emails);
                                     }
+                                    if(student_id_search.length() !=0 || !(student_id_search.matches(""))){
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            if(document.getString("studentID").compareTo(student_id_search) == 0)
+                                            {
+                                                Log.d("tring","2occ"+document.getString("studentID"));
+                                                studentID_emails.add(document.getId());
+                                                Log.d("found", "found and display student21231" +document.getString("firstName"));
+                                            }
+                                            Log.d("success", document.getId());
+                                        }
+                                        all_arrays.add(studentID_emails);
+                                    }
+
+
 
 
                                     search();
@@ -391,6 +411,7 @@ public class SearchStudents extends AppCompatActivity {
         Log.d("tag","beforef size "+fnameresult_emails.size());
         Log.d("tag","beforel size "+lnameresult_emails.size());
         Log.d("tag","beforemajor size "+majorresult_emails.size());
+        Log.d("tag","student id before size "+studentID_emails.size());
         Log.d("tag","all arrays  size "+all_arrays.size());
 
         //retain all
@@ -415,6 +436,7 @@ public class SearchStudents extends AppCompatActivity {
         Log.d("tag","afterf size "+fnameresult_emails.size());
         Log.d("tag","afterl size "+lnameresult_emails.size());
         Log.d("acnhr","ANCHOR _" + anchor);
+        Log.d("tag","student id after size "+studentID_emails.size());
         Log.d("tag","all arrays size "+all_arrays.get(anchor).size());
 
         //Edit all arrays.get (anchor) to remove duplicates
