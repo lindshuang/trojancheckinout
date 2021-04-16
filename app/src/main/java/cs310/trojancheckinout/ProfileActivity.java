@@ -96,6 +96,8 @@ public class ProfileActivity extends AppCompatActivity {
     Button confirmDelete_b_id;
     Button cancelDelete_b_id;
 
+    LinearLayout pop_up_kick_out;
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -164,10 +166,14 @@ public class ProfileActivity extends AppCompatActivity {
                     Button cancel_b_id = findViewById(R.id.cancelButton);
                     Button confirmDelete_b_id = findViewById(R.id.confirmDeleteButton);
                     Button cancelDelete_b_id = findViewById(R.id.cancelDeleteButton);
+                    Button kick_out_b_id = findViewById(R.id.button_kick_out);
+                    Button confirmKickOut_b_id = findViewById(R.id.confirmKickOutButton);
+                    Button cancelKickOut_b_id = findViewById(R.id.cancelKickOutButton);
 
                     //pop up
                     pop_up_id = (LinearLayout) findViewById(R.id.pop_up);
                     delete_pop_up_id = (LinearLayout) findViewById(R.id.delete_pop_up);
+                    pop_up_kick_out = (LinearLayout) findViewById(R.id.pop_up_kick_out);
 
 
                     if (currUser.isChecked_in()){
@@ -192,6 +198,10 @@ public class ProfileActivity extends AppCompatActivity {
                         editProfileButton.setVisibility(View.INVISIBLE);
                         changePassword.setVisibility(View.INVISIBLE);
                         editProfileGalleryButton.setVisibility(View.INVISIBLE);
+                        if(currUser.isChecked_in()==true){
+                            kick_out_b_id.setVisibility(View.VISIBLE);
+                        }
+
                     }
                     // Set isDeleted view
                     if(isuserDeleted){
@@ -202,6 +212,7 @@ public class ProfileActivity extends AppCompatActivity {
                         editProfileButton.setVisibility(View.INVISIBLE);
                         changePassword.setVisibility(View.INVISIBLE);
                         editProfileGalleryButton.setVisibility(View.INVISIBLE);
+                        kick_out_b_id.setVisibility(View.INVISIBLE);
                     }else{
                         isDeletedView.setVisibility(View.INVISIBLE);
                     }
@@ -344,6 +355,33 @@ public class ProfileActivity extends AppCompatActivity {
                             Log.d("Profile", "button Clicked");
                             //editProfilePic(picEditText)
                             editLinkDialog.show();
+                        }
+                    });
+
+                    //Click Kick Out Button
+                    kick_out_b_id.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.d("Profile", "kick out Clicked");
+                            pop_up_kick_out.setVisibility(View.VISIBLE);
+
+
+                        }
+                    });
+                    //Kick OUt POPUP: on clicking confirm
+                    confirmKickOut_b_id.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            pop_up_kick_out.setVisibility(View.INVISIBLE);
+                            checkOut();
+
+                        }
+                    });
+
+                    //Kick OUt POPUP: on clicking cancel
+                    cancelKickOut_b_id.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            pop_up_kick_out.setVisibility(View.INVISIBLE);
                         }
                     });
 
