@@ -97,6 +97,7 @@ public class SearchStudents extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+                Log.d("document", "SEARCH STARTS HERE");
                 fnameresult_emails.clear();
                 lnameresult_emails.clear();
                 majorresult_emails.clear();
@@ -129,38 +130,90 @@ public class SearchStudents extends AppCompatActivity {
                 Log.d("di",student_id_search+"student_id_search");
 
                 if(building_search.length() !=0 || !(building_search.matches(""))) {
-                    DocumentReference docIdRef2 = db.collection("buildings").document(building_search);
-                    docIdRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot document = task.getResult();
-                                List<String> occupants_results_array = (List<String>) document.get("occupants");
-                                Log.d("occuapnt","getting occupants array");
-                                Log.d("tag","size"+occupants_results_array.size());
+                    Character[] numbers = {'0','1','2','3','4','5','6','7','8','9'};
+                    db.collection("history")
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        ArrayList<String> temp_emails_building = new ArrayList<String>();
 
-                                if (!document.exists()) {
-                                    Log.d("document", "Document does not exist! in check in function");
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            String b_name = document.getString("buildingName");
+                                            if(b_name.compareTo(building_search)==0){
+                                                temp_emails_building.add(document.getId());
+                                            }
 
-                                }
-                                else {
-                                    Log.d("Document", "Document exists! in check in function");
-                                    for(int h=0;h<occupants_results_array.size();h++){
-
-                                        //only want to add real occupants "not the 0s"
-                                        if(occupants_results_array.get(h).compareTo("0") != 0){
-                                            buildingresult_emails.add(occupants_results_array.get(h));
                                         }
+                                        Log.d("succes","SIZE"+ temp_emails_building.size());
+                                        for(int b=0;b<temp_emails_building.size();b++)
+                                        {
+                                            int index=0;
+                                            boolean number_found = false;
+                                            for(int h=0;h< temp_emails_building.get(b).length();h++) {
+                                                String tmp = temp_emails_building.get(b);
+                                                number_found = false;
+                                                for (int c = 0; c < numbers.length; c++) {
+                                                    if (tmp.charAt(h) ==numbers[c])
+                                                    {
+                                                        ++index;
+                                                        number_found = true;
+                                                        break;
+
+                                                    }
+                                                }
+                                                if(number_found==false){
+                                                    break;
+                                                }
+
+
+                                            }
+                                            buildingresult_emails.add(temp_emails_building.get(b).substring(index));
+                                        }
+
+                                        Log.d("T","size of"+ buildingresult_emails.size());
+
+                                        all_arrays.add(buildingresult_emails);
+
+
+                                    } else {
+                                        Log.d("bad", "Error getting documents: ", task.getException());
                                     }
-                                    all_arrays.add(buildingresult_emails);
-
-
                                 }
-                            } else {
-                                Log.d("document", "Failed with: ", task.getException());
-                            }
-                        }
-                    });
+                            });
+//                    DocumentReference docIdRef2 = db.collection("buildings").document(building_search);
+//                    docIdRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                            if (task.isSuccessful()) {
+//                                DocumentSnapshot document = task.getResult();
+//                                List<String> occupants_results_array = (List<String>) document.get("occupants");
+//                                Log.d("occuapnt","getting occupants array");
+//                                Log.d("tag","size"+occupants_results_array.size());
+//
+//                                if (!document.exists()) {
+//                                    Log.d("document", "Document does not exist! in check in function");
+//
+//                                }
+//                                else {
+//                                    Log.d("Document", "Document exists! in check in function");
+//                                    for(int h=0;h<occupants_results_array.size();h++){
+//
+//                                        //only want to add real occupants "not the 0s"
+//                                        if(occupants_results_array.get(h).compareTo("0") != 0){
+//                                            buildingresult_emails.add(occupants_results_array.get(h));
+//                                        }
+//                                    }
+//                                    all_arrays.add(buildingresult_emails);
+//
+//
+//                                }
+//                            } else {
+//                                Log.d("document", "Failed with: ", task.getException());
+//                            }
+//                        }
+//                    });
 
                 }
                 if(date_search.length() !=0 || !(date_search.matches(""))) {
@@ -231,6 +284,18 @@ public class SearchStudents extends AppCompatActivity {
 
                                             String startTime = document.getString("timeInTime");
                                             String endTime = document.getString("timeOutTime");
+                                            if(endTime == null) {
+                                                Date date = new Date();
+                                                Calendar calendar = Calendar.getInstance();
+                                                calendar.setTime(date);
+                                                SimpleDateFormat SDF = new SimpleDateFormat("MM/dd/yyyy");
+                                                String timeInDate = SDF.format(date);
+
+                                                Formatter timeInT = new Formatter();
+                                                Calendar gfg_calender = Calendar.getInstance(TimeZone.getTimeZone("GMT-7"));
+                                                timeInT.format("%tH:%tM", gfg_calender, gfg_calender);
+                                                endTime = String.valueOf(timeInT);
+                                            }
 
                                             SimpleDateFormat format = new SimpleDateFormat("HH:mm");
                                             Date hour_start_user_input =  new Date();
@@ -384,10 +449,14 @@ public class SearchStudents extends AppCompatActivity {
                                         all_arrays.add(studentID_emails);
                                     }
 
+                                while(all_arrays.size()<1){
+                                    Log.d("tag","cat");
 
+                                }
+                               // if(all_arrays.size() >1){
+                                        search();
+                             //   }
 
-
-                                    search();
 
                                 } else {
                                     Log.d("bad", "Error getting documents: ", task.getException());
@@ -406,38 +475,40 @@ public class SearchStudents extends AppCompatActivity {
 
     public void search(){
 
-        //fname should be size 3
-        //lname should be size 1
-        Log.d("tag","beforef size "+fnameresult_emails.size());
-        Log.d("tag","beforel size "+lnameresult_emails.size());
-        Log.d("tag","beforemajor size "+majorresult_emails.size());
-        Log.d("tag","student id before size "+studentID_emails.size());
-        Log.d("tag","all arrays  size "+all_arrays.size());
-
+        Log.d("tag a","beforef size "+fnameresult_emails.size());
+        Log.d("tag a","beforel size "+lnameresult_emails.size());
+        Log.d("tag a","beforemajor size "+majorresult_emails.size());
+        Log.d("tag a","beforedate size "+dateresult_emails.size());
+        Log.d("tag a","beforebuilding size "+buildingresult_emails.size());
+        Log.d("tag a","all arrays  size "+all_arrays.size());
         //retain all
+
+        //Array1: Building which is empty
+        //Array 2: Date search which has 2 people
         if(all_arrays.size()>1){
             for(int r=0;r<all_arrays.size();r++){
                 //anchor
-                if(all_arrays.get(r).size() != 0){
+                //if(all_arrays.get(r).size() != 0){
                     anchor = r;
                     Log.d("anchor","anchor check"+ anchor);
                     for(int u=r+1;u<all_arrays.size();u++){
-                        if(all_arrays.get(u).size() != 0){
+                       // if(all_arrays.get(u).size() != 0){
                             all_arrays.get(anchor).retainAll(all_arrays.get(u));
-                        }
+                      //  }
 
                     }
                     break;
-                }
+                //}
             }
         }
 
         //fnameresult_emails.retainAll(lnameresult_emails);
-        Log.d("tag","afterf size "+fnameresult_emails.size());
-        Log.d("tag","afterl size "+lnameresult_emails.size());
-        Log.d("acnhr","ANCHOR _" + anchor);
-        Log.d("tag","student id after size "+studentID_emails.size());
-        Log.d("tag","all arrays size "+all_arrays.get(anchor).size());
+        Log.d("tag b","afterf size "+fnameresult_emails.size());
+        Log.d("tag b","afterl size "+lnameresult_emails.size());
+        Log.d("tag b","beforedate size "+dateresult_emails.size());
+        Log.d("tag b","beforebuilding size "+buildingresult_emails.size());
+        Log.d("acnhr b","ANCHOR _" + anchor);
+        Log.d("tag b","all arrays at anchor size "+all_arrays.get(anchor).size());
 
         //Edit all arrays.get (anchor) to remove duplicates
         LinkedHashSet<String> set = new LinkedHashSet<String>();

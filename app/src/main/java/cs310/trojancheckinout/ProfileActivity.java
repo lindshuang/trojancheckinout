@@ -375,6 +375,10 @@ public class ProfileActivity extends AppCompatActivity {
                             pop_up_kick_out.setVisibility(View.INVISIBLE);
                             checkOut();
 
+                            //navigate back to checkin page
+                            Intent checkOutIntent = new Intent(ProfileActivity.this, SearchStudents.class);
+                            startActivityForResult(checkOutIntent, 0);
+
                         }
                     });
 
