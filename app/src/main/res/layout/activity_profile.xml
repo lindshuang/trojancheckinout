@@ -3,6 +3,177 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/pop_up"
+        android:visibility="invisible"
+        >
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginTop="300dp">
+
+            <LinearLayout
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/confirm_text"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="You are checked in.Would you like to confirm check out?"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:padding="10dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent = "true"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/confirmCheckButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="100dp"
+                        android:text="Yes" />
+
+                    <Button
+                        android:id="@+id/cancelButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/pop_up_kick_out"
+        android:visibility="invisible"
+        >
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginTop="300dp">
+
+            <LinearLayout
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/confirm_kick_out_text"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Would you like to confirm kick out?"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:padding="10dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent = "true"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/confirmKickOutButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="100dp"
+                        android:text="Yes" />
+
+                    <Button
+                        android:id="@+id/cancelKickOutButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/delete_pop_up"
+        android:visibility="invisible"
+        >
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginTop="300dp">
+
+            <LinearLayout
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/delete_text"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Are you sure that you would like to delete your account?"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:padding="10dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent = "true"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/confirmDeleteButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="100dp"
+                        android:text="Yes" />
+
+                    <Button
+                        android:id="@+id/cancelDeleteButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
     <RelativeLayout
         android:id="@+id/card_view_header"
         android:layout_width="match_parent"
@@ -39,6 +210,17 @@
             android:layout_toEndOf="@id/image_view_pic"
             android:text="Student"
             android:textSize="18sp" />
+        <TextView
+            android:id="@+id/textview_isdeleted"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_project_role"
+            android:layout_marginTop="4dp"
+            android:layout_toEndOf="@id/image_view_pic"
+            android:text="Account Deleted"
+            android:textColor="#ff0000"
+            android:textSize="15sp"
+            android:visibility="invisible"/>
 
     </RelativeLayout>
 
@@ -56,10 +238,9 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
             android:paddingBottom="14dp"
-            android:text="Currently checked"
+            android:text=""
             android:textColor="#5E9460"
             android:textSize="14sp" />
-
         <TextView
             android:id="@+id/text_view_email"
             android:layout_width="match_parent"
@@ -94,6 +275,18 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/button_kick_out"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="0dp"
+            android:text="Kick Out"
+            android:textAlignment="viewStart"
+            android:visibility="invisible"
+            android:textColor="#4D98A1"
+            android:textSize="14sp" />
+
+        <Button
             android:id="@+id/button_checkout_profile"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
@@ -122,19 +315,18 @@
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edit Profile Picture with Link"
+            android:text="Edit Profile Picture by Link"
             android:padding="0dp"
             android:textColor="#4D98A1"
             android:textAlignment="viewStart"
             android:textSize="14sp"
             />
-
         <Button
             android:id="@+id/button_edit_pic_gallery"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Profile Picture from Gallery"
+            android:text="Edit Profile Picture by Gallery Upload"
             android:padding="0dp"
             android:textColor="#4D98A1"
             android:textAlignment="viewStart"

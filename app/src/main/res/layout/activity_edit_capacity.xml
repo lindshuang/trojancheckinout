@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditCapacity">
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/editCapacityTitle"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Edit Capacity"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="30dp"
+            android:textColor="#000000"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            />
+        <TextView
+            android:id="@+id/buildingName"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Building Name"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="30dp"
+            android:textColor="#000000"
+            android:textSize="35dp"
+            />
+
+        <TextView
+            android:id="@+id/newCapacityText"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="New Capacity"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="30dp"
+            android:textColor="#808080"
+            android:textSize="20dp"
+            />
+        <EditText
+            android:id="@+id/capacity_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"/>
+        <Button
+            android:id="@+id/updateButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:textColor="#FFFFFF"
+            android:text="UPDATE"
+            android:background="@drawable/roundedbutton"
+            android:layout_marginTop="20dp"/>
+
+        <TextView
+            android:id="@+id/csvText"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Alternatively, upload a CSV file."
+            android:layout_marginTop="80dp"
+            android:layout_marginLeft="30dp"
+            android:textColor="#808080"
+            android:textSize="20dp"
+            />
+
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

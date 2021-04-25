@@ -9,7 +9,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -21,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,6 +35,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -64,7 +67,8 @@ public class ProfileActivity extends AppCompatActivity {
     private DocumentSnapshot userDoc;
     public static String QR_test;
     public static final int GET_FROM_GALLERY = 3;
-    ///private EditText picEditText;
+
+    private TextView isDeletedView;
 
     //user variables
     //private User current_student = new User("Anya","Nutakki","nutakki@usc.edu","password",false);
@@ -82,7 +86,20 @@ public class ProfileActivity extends AppCompatActivity {
     String h_id ="";
     double timeElapsed=0.0;
 
-    //private String qrCode = "";
+    boolean isCurrUser = true;
+
+    //Pop-Up Check Out
+    LinearLayout pop_up_id;
+    Button confirmCheck_b_id;
+    Button cancel_b_id;
+
+    //Pop-Up Delete
+    LinearLayout delete_pop_up_id;
+    Button confirmDelete_b_id;
+    Button cancelDelete_b_id;
+
+    LinearLayout pop_up_kick_out;
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -91,12 +108,30 @@ public class ProfileActivity extends AppCompatActivity {
         //get db and bundle and current user
         db = FirebaseFirestore.getInstance();
         bundle = getIntent().getExtras();
-        //currEmail = bundle.getString("email"); //uncomment when you pass in bundle
-        currEmail = sharedData.getCurr_email();
+
+        Log.d("DEBUG", bundle.getString("Source"));
+
+
+        //NOT the current user, student (coming from occupants or search page view history
+        if(bundle.getString("Source").compareTo("CurrUser") != 0 ){
+            Log.d("DEBUG", "it's not null");
+            String potCurrEmail = bundle.getString("Source");
+           // if(potCurrEmail.compareTo("Occupants") == 0){
+                Log.d("DEBUG", "it's coming from occupants");
+                isCurrUser = false;
+                currEmail = bundle.getString("email");
+                Log.d("DEBUG", currEmail);
+           // }
+        }
+        //When it is the current user, just use shared data
+        else {
+            //currEmail = bundle.getString("email"); //uncomment when you pass in bundle
+            Log.d("Wnet in sle", "currrrr"+currEmail);
+            currEmail = sharedData.getCurr_email();
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-//        qrCode = sharedData.getData();
-//        Log.d("QR: ", "qrcode: " + qrCode);
+
 
         //create user object since we need almost all the info
         //currEmail = "nutakki@usc.edu"; //temporary, just for testing
@@ -119,13 +154,29 @@ public class ProfileActivity extends AppCompatActivity {
                             userDoc.getString("profilePicture"),
                             userDoc.getString("current_qr"));
 
+                    boolean isuserDeleted =  userDoc.getBoolean("is_deleted");
+                    currUser.setIs_deleted(isuserDeleted);
                     //Buttons
                     Button viewHistory = findViewById(R.id.button_view_history);
                     Button editProfileButton = findViewById(R.id.button_edit_pic);
                     Button logoutButton = findViewById(R.id.button_logout);
                     Button deleteAccount = findViewById(R.id.button_delete_account);
                     Button checkoutButton = findViewById(R.id.button_checkout_profile);
+                    Button changePassword = findViewById(R.id.button_change_password);
                     Button editProfileGalleryButton = findViewById(R.id.button_edit_pic_gallery);
+                    Button confirmCheck_b_id = findViewById(R.id.confirmCheckButton);
+                    Button cancel_b_id = findViewById(R.id.cancelButton);
+                    Button confirmDelete_b_id = findViewById(R.id.confirmDeleteButton);
+                    Button cancelDelete_b_id = findViewById(R.id.cancelDeleteButton);
+                    Button kick_out_b_id = findViewById(R.id.button_kick_out);
+                    Button confirmKickOut_b_id = findViewById(R.id.confirmKickOutButton);
+                    Button cancelKickOut_b_id = findViewById(R.id.cancelKickOutButton);
+
+                    //pop up
+                    pop_up_id = (LinearLayout) findViewById(R.id.pop_up);
+                    delete_pop_up_id = (LinearLayout) findViewById(R.id.delete_pop_up);
+                    pop_up_kick_out = (LinearLayout) findViewById(R.id.pop_up_kick_out);
+
 
                     if (currUser.isChecked_in()){
                         checkoutButton.setVisibility(View.VISIBLE);
@@ -137,8 +188,36 @@ public class ProfileActivity extends AppCompatActivity {
                     TextView studentIDView = findViewById(R.id.text_view_id);
                     TextView majorView = findViewById(R.id.text_view_major);
                     TextView occupationView = findViewById(R.id.text_view_project_role);
-                    TextView checkedIn = findViewById(R.id.text_view_checkin);
+                    TextView isDeletedView = findViewById(R.id.textview_isdeleted);
                     profilePicView = findViewById(R.id.image_view_pic);
+                    TextView checkedIn2 = findViewById(R.id.text_view_checkin);
+
+                    //set non-Current User view
+                    if(!isCurrUser){
+                        logoutButton.setVisibility(View.INVISIBLE);
+                        deleteAccount.setVisibility(View.INVISIBLE);
+                        checkoutButton.setVisibility(View.INVISIBLE);
+                        editProfileButton.setVisibility(View.INVISIBLE);
+                        changePassword.setVisibility(View.INVISIBLE);
+                        editProfileGalleryButton.setVisibility(View.INVISIBLE);
+                        if(currUser.isChecked_in()==true){
+                            kick_out_b_id.setVisibility(View.VISIBLE);
+                        }
+
+                    }
+                    // Set isDeleted view
+                    if(isuserDeleted){
+                        isDeletedView.setVisibility(View.VISIBLE);
+                        logoutButton.setVisibility(View.INVISIBLE);
+                        deleteAccount.setVisibility(View.INVISIBLE);
+                        checkoutButton.setVisibility(View.INVISIBLE);
+                        editProfileButton.setVisibility(View.INVISIBLE);
+                        changePassword.setVisibility(View.INVISIBLE);
+                        editProfileGalleryButton.setVisibility(View.INVISIBLE);
+                        kick_out_b_id.setVisibility(View.INVISIBLE);
+                    }else{
+                        isDeletedView.setVisibility(View.INVISIBLE);
+                    }
 
                     //Display Data
                     String fullName = currUser.getFirstName() + " " + currUser.getLastName();
@@ -147,11 +226,61 @@ public class ProfileActivity extends AppCompatActivity {
                     studentIDView.setText("Student ID: " + currUser.getStudentID());
 
                     //set as invisible if manager
-                    //majorView.setText("Major: " + "Computer Science");
+
                     occupationView.setText(currUser.getOccupation());
                     final String profilePic = currUser.getProfilePicture();
                     Picasso.get().load(profilePic).into(profilePicView);
-                    //qrCode = currUser.getCurrent_qr();
+
+                    //Get Current Checked in Building for User and display
+                    DocumentReference docIdRef = db.collection("users").document(currEmail);
+                    docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                List<String> histories = (List<String>) document.get("histories");
+                                if (!document.exists()) {
+                                    Log.d("document", "Document does not exist!");
+                                }
+                                else {
+                                    Log.d("Document", "Document exists!");
+                                    //look at last object in list of histories
+                                    int history_size = histories.size();
+                                    if(history_size > 0 && histories != null) {
+                                        String last_history = histories.get(histories.size() - 1); //1anyanutakki@usc.edu
+                                        Log.d("Last history", "Last History is " + last_history);
+                                        //check histories collection by passing in concatenated email
+                                        DocumentReference docIdRef = db.collection("history").document(last_history);
+                                        docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    DocumentSnapshot document = task.getResult();
+                                                    String last_building = document.getString("buildingName");
+
+                                                    //UPDATE UI
+                                                    if (currUser.isChecked_in()) {
+                                                        checkedIn2.setText("Currently Checked Into " + last_building);
+                                                    } else {
+                                                        checkedIn2.setText("Currently Checked Out");
+                                                    }
+                                                } else {
+                                                    Log.d("document", "Failed with: ", task.getException());
+                                                }
+                                            }
+                                        });
+                                    }
+                                    else{
+                                        if (!currUser.isIs_deleted()){
+                                            checkedIn2.setText("Currently Checked Out");
+                                        }
+                                    }
+                                }
+                            } else {
+                                Log.d("document", "Failed with: ", task.getException());
+                            }
+                        }
+                    });
 
                     //Get Current Checked in Building for User and display
                     DocumentReference docIdRef = db.collection("users").document(currEmail);
@@ -277,6 +406,33 @@ public class ProfileActivity extends AppCompatActivity {
                         }
                     });
 
+                    //Click Kick Out Button
+                    kick_out_b_id.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.d("Profile", "kick out Clicked");
+                            pop_up_kick_out.setVisibility(View.VISIBLE);
+
+
+                        }
+                    });
+                    //Kick OUt POPUP: on clicking confirm
+                    confirmKickOut_b_id.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            pop_up_kick_out.setVisibility(View.INVISIBLE);
+                            checkOut();
+
+                        }
+                    });
+
+                    //Kick OUt POPUP: on clicking cancel
+                    cancelKickOut_b_id.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            pop_up_kick_out.setVisibility(View.INVISIBLE);
+                        }
+                    });
+
                     //Click Log Out Button
                     logoutButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -298,15 +454,35 @@ public class ProfileActivity extends AppCompatActivity {
                     deleteAccount.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            deleteAccount();
+                            delete_pop_up_id.setVisibility(View.VISIBLE);
+
                         }
                     });
 
+                    //DELETE POPUP: on clicking confirm
+                    confirmDelete_b_id.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            delete_pop_up_id.setVisibility(View.INVISIBLE);
+                            deleteAccount();
+
+                        }
+                    });
+
+                    //DELETE POPUP: on clicking cancel
+                    cancelDelete_b_id.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            delete_pop_up_id.setVisibility(View.INVISIBLE);
+                        }
+                    });
                     //Click View History Button
                     viewHistory.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent profileActivityIntent = new Intent(ProfileActivity.this, HistoryActivity.class);
+                            Log.d("CHANGIN", "CHNG"+ currEmail);
+                            //profileActivityIntent.putExtra("Source","Occupants");
+                           // profileActivityIntent.putExtra("email",search_results.get(position).getEmail());
                             profileActivityIntent.putExtra("email", currEmail);
                             startActivity(profileActivityIntent);
                         }
@@ -324,12 +500,36 @@ public class ProfileActivity extends AppCompatActivity {
                     checkoutButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            checkOut();
-                            Intent checkOutIntent = new Intent(ProfileActivity.this, CheckIn.class);
-                            startActivity(checkOutIntent);
+                            pop_up_id.setVisibility(View.VISIBLE);
+
                         }
 
                     });
+
+                    //CHECKOUT POPUP: on clicking confirm
+                    confirmCheck_b_id.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            pop_up_id.setVisibility(View.INVISIBLE);
+
+                            checkOut();
+
+
+                            //navigate back to checkin page
+                            Intent checkOutIntent = new Intent(ProfileActivity.this, CheckIn.class);
+                            startActivityForResult(checkOutIntent, 0);
+                        }
+                    });
+
+                    //CHECKOUT POPUP: on clicking cancel
+                    cancel_b_id.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            pop_up_id.setVisibility(View.INVISIBLE);
+                        }
+                    });
+
+
+
                 }
             }
         });
@@ -403,6 +603,75 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    //Edit Profile Pic from Gallery
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //Detects request codes
+        if(requestCode==GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
+            Uri selectedImage = data.getData();
+            Bitmap bitmap = null;
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                profilePicView.setImageBitmap(bitmap);
+                uploadPic(); //call upload pic function to upload to firebase storage
+            } catch (FileNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
+    protected void uploadPic(){
+        profilePicView.setDrawingCacheEnabled(true);
+        profilePicView.buildDrawingCache();
+        Bitmap bitmap = ((BitmapDrawable) profilePicView.getDrawable()).getBitmap();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        //create upload task
+        String path = "profilepics/" + UUID.randomUUID() + ".png";
+        Log.d("Doc", "storage path: " + path);
+        StorageReference profilePicRef = storage.getReference(path);
+        UploadTask uploadTask = profilePicRef.putBytes(data);
+
+        uploadTask.addOnSuccessListener(ProfileActivity.this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                profilePicRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Uri downloadUrl = uri;
+                        String urlString = downloadUrl.toString();
+                        Log.d("Doc", "download URL: " + urlString);
+
+                        //upload into firebase Storage
+                        DocumentReference currDoc = db.collection("users").document(currEmail);
+                        currDoc.update("profilePicture", urlString)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d("Doc", "DocumentSnapshot successfully written!");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w("Doc", "Error writing document", e);
+                                    }
+                                });
+                    }
+                });
+            }
+        });
+    }
+
+
     //Log Out Button Function
     protected void logout(){
         Intent intent = new Intent(ProfileActivity.this, LogInActivity.class);
@@ -411,20 +680,19 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     //Delete Account Function
-    protected void deleteAccount(){
-        db.collection("users").document(currUser.getEmail())//temp, ask Ashna about this
-                .delete()
+    protected void deleteAccount() {
+        db.collection("users").document(currUser.getEmail())
+                .update("is_deleted", true)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d("test", "DocumentSnapshot successfully deleted!");
-                        //redirect to the home screen after logging out
+                        Log.d("Doc", "DocumentSnapshot successfully written!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w("test", "Error deleting document", e);
+                        Log.w("Doc", "Error writing document", e);
                     }
                 });
 
@@ -571,15 +839,15 @@ public class ProfileActivity extends AppCompatActivity {
                         Log.d("time out date", "time Out Date "+ timeOutDate);
 
                         Formatter timeOutT = new Formatter();
-                        Calendar gfg_calender = Calendar.getInstance(TimeZone.getTimeZone("PST"));
-                        timeOutT.format("%tl:%tM", gfg_calender, gfg_calender);
+                        Calendar gfg_calender = Calendar.getInstance(TimeZone.getTimeZone("GMT-7"));
+                        timeOutT.format("%tH:%tM", gfg_calender, gfg_calender);
                         String timeOutTime = String.valueOf(timeOutT);
                         Log.d("time out date", "time Out Time "+ timeOutTime);
 
                         //calculate time elapsed
                         try {
                             Log.d("try", "went into try");
-                            SimpleDateFormat format = new SimpleDateFormat("hh:mm");
+                            SimpleDateFormat format = new SimpleDateFormat("HH:mm");
                             Date date1 = format.parse(timeIn_db);
                             Log.d("date1","date1");
                             Date date2 = format.parse(timeOutTime);
@@ -740,35 +1008,4 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
 
-    //Edit Profile Pic Pop-up
-//    public AlertDialog onCreateDialog() {
-//        builder = new AlertDialog.Builder(this);
-//        LayoutInflater inflater = getLayoutInflater(); // Get the layout inflater
-//        final View view = inflater.inflate(R.layout.dialog_edit_pic, null);
-//        final EditText picEditText = view.findViewById(R.id.img_link);
-//        final TextView error_text = view.findViewById(R.id.error_text);
-//
-//                // Inflate and set the layout for the dialog, pass null as the parent view because its going in the dialog layout
-//        builder.setView(view)
-//                // Add action buttons
-//                .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        picLink = picEditText.getText().toString();
-//                        if(picLink.length() <= 0){
-//                            error_text.setVisibility(View.VISIBLE);
-//                            error_text.setText("Email Address not found");
-//                            Log.d("document", "no link!");
-//                        }else{
-//                            editProfilePic(picLink);
-//                        }
-//                    }
-//                })
-//                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        dialog.cancel();
-//                    }
-//                });
-//        return builder.create();
-//    }
 }

@@ -25,11 +25,8 @@ import com.opencsv.CSVReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import cs310.trojancheckinout.models.User;
@@ -48,6 +45,7 @@ public class NavActivity extends AppCompatActivity {
         setContentView(R.layout.activity_nav);
         Button profileButton = (Button) findViewById(R.id.profile_button);
         Button showBuildingsButton = (Button) findViewById(R.id.button);
+        Button searchStudentsButton = (Button) findViewById(R.id.search_students_button);
         Button csvButton = (Button) findViewById(R.id.csv_button);
         errortxt = findViewById(R.id.errortxt);
 
@@ -61,13 +59,16 @@ public class NavActivity extends AppCompatActivity {
                     role = userDoc.getString("occupation");
                     if(role.compareTo("Manager")==0) {
                         showBuildingsButton.setVisibility(View.VISIBLE);
+                        searchStudentsButton.setVisibility(View.VISIBLE);
                         csvButton.setVisibility(View.VISIBLE);
                     } else {
                         showBuildingsButton.setVisibility(View.INVISIBLE);
+                        searchStudentsButton.setVisibility(View.INVISIBLE);
                         csvButton.setVisibility(View.INVISIBLE);
                     }
                 }
             }
+
         });
         try {
             Thread.sleep(1000);
@@ -78,6 +79,7 @@ public class NavActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent profileActivityIntent = new Intent(NavActivity.this, ProfileActivity.class);
+                profileActivityIntent.putExtra("Source","CurrUser");
                 startActivityForResult(profileActivityIntent, 0);
             }
         });
@@ -90,6 +92,15 @@ public class NavActivity extends AppCompatActivity {
             }
         });
 
+
+        searchStudentsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent searchActivityIntent = new Intent(NavActivity.this, SearchStudents.class);
+                startActivityForResult(searchActivityIntent, 0);
+            }
+        });
+
         Button checkInButton = (Button) findViewById(R.id.check_button);
         checkInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,15 +110,6 @@ public class NavActivity extends AppCompatActivity {
             }
         });
 
-        //csv
-//        csvButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                readCsv();
-//            }
-//        });
-
-        //
         csvButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,40 +167,6 @@ public class NavActivity extends AppCompatActivity {
         }
     }
 
-
-//    public void readCsv(){
-//        try {
-//
-//            CSVReader reader = new CSVReader(new InputStreamReader(getResources().openRawResource(R.raw.data)));//Specify asset file name
-////            String [] nextLine;
-////            InputStream is = getResources().openRawResource(R.raw.data);
-////            BufferedReader reader = new BufferedReader(
-////                    new InputStreamReader(is, Charset.forName("UTF-8")));
-//            String[] line = reader.readNext();
-//            while ((line = reader.readNext()) != null) {
-//                // Split the line into different tokens (using the comma as a separator).
-//                // String[] tokens = line.split(",");
-//                Log.d("FILE READER CSV","CSV " + line[0] + line[1]);
-//
-//                String building_name = line[0];
-//                String building_cap = line[1];
-//                map.put(building_name, building_cap);
-//
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            Toast.makeText(this, "File not formatted properly", Toast.LENGTH_SHORT).show();
-//        }
-//
-//        Iterator it = map.entrySet().iterator();
-//        while (it.hasNext()) {
-//            Map.Entry pair = (Map.Entry)it.next();
-//            Log.d("iterator", pair.getKey() + " = " + pair.getValue());
-//            checkBuildingMap((String)pair.getKey(), (String)pair.getValue());
-//        }
-//
-//    }
 
     public void checkBuildingMap(String building_name, String building_cap){
         // check if building exists in db

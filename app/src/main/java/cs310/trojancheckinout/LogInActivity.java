@@ -89,24 +89,35 @@ public class LogInActivity  extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
-                            String pswd = document.getString("password");
+
                             if (!document.exists()) {
                                 error_text.setVisibility(View.VISIBLE);
                                 error_text.setText("Email Address not found");
                                 Log.d("document", "Document does not exist!");
 
                             }
-                            else if(!pswd.equals(password)){
-                                error_text.setVisibility(View.VISIBLE);
-                                error_text.setText("Password does not match");
-                                Log.d("document", "password is wrong");
+                            else{
+                                String pswd = document.getString("password");
+                                boolean is_deleted = document.getBoolean("is_deleted");
+
+                                if(!pswd.equals(password)){
+                                    error_text.setVisibility(View.VISIBLE);
+                                    error_text.setText("Password does not match");
+                                    Log.d("document", "password is wrong");
+                                }
+                                else if(is_deleted){
+                                    error_text.setVisibility(View.VISIBLE);
+                                    error_text.setText("Account has been deleted");
+                                    Log.d("document", "account is deleted");
+                                }
+                                else {
+                                    Intent intent = new Intent(LogInActivity.this, NavActivity.class);
+                                    //intent.putExtra("email", email);
+                                    startActivityForResult(intent, 0);
+                                    Log.d("Document", "Document exists!");
+                                }
                             }
-                            else {
-                                Intent intent = new Intent(LogInActivity.this, NavActivity.class);
-                                //intent.putExtra("email", email);
-                                startActivityForResult(intent, 0);
-                                Log.d("Document", "Document exists!");
-                            }
+
                         } else {
                             Log.d("document", "Failed with: ", task.getException());
                         }
