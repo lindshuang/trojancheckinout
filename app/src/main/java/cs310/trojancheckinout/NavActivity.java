@@ -25,10 +25,12 @@ import com.opencsv.CSVReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import cs310.trojancheckinout.models.Building;
 import cs310.trojancheckinout.models.User;
 
 public class NavActivity extends AppCompatActivity {
@@ -38,6 +40,7 @@ public class NavActivity extends AppCompatActivity {
     public static final int GET_FROM_GALLERY = 1;
     String role = "";
     Map<String,String> map = new HashMap<String, String>();
+    boolean isAddBuildingCSVClicked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +50,7 @@ public class NavActivity extends AppCompatActivity {
         Button showBuildingsButton = (Button) findViewById(R.id.button);
         Button searchStudentsButton = (Button) findViewById(R.id.search_students_button);
         Button csvButton = (Button) findViewById(R.id.csv_button);
+        Button csvAddButton = (Button) findViewById(R.id.csv_add_button);
         errortxt = findViewById(R.id.errortxt);
 
         DocumentReference docIdRef2 = db.collection("users").document(sharedData.getCurr_email());
@@ -118,6 +122,16 @@ public class NavActivity extends AppCompatActivity {
                 startActivityForResult(mediaIntent,GET_FROM_GALLERY);
             }
         });
+
+        csvAddButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mediaIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                mediaIntent.setType("*/*"); // Set MIME type as per requirement
+                isAddBuildingCSVClicked = true;
+                startActivityForResult(mediaIntent,GET_FROM_GALLERY);
+            }
+        });
     }
 
     @Override
@@ -126,7 +140,7 @@ public class NavActivity extends AppCompatActivity {
         Log.d("Doc", "browse file");
 
         //Detects request codes
-        if(requestCode==GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
+        if(!isAddBuildingCSVClicked && requestCode==GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
             Uri csvUri = data.getData();
             Log.d("Doc", "CSV URI= " + csvUri);
 
@@ -162,11 +176,41 @@ public class NavActivity extends AppCompatActivity {
                 }
             }
 
-        }else{
+        }
+        else if(isAddBuildingCSVClicked && requestCode==GET_FROM_GALLERY && resultCode == Activity.RESULT_OK){
+            Uri csvUri = data.getData();
+            Log.d("Doc", "CSV URI= " + csvUri);
+
+            try {
+                //File csvFile = new File(csvUri.getPath());
+                Log.d("Doc", "CSV path= " + csvUri.getPath());
+                InputStream input = getContentResolver().openInputStream(csvUri);
+                CSVReader reader = new CSVReader(new InputStreamReader(input)); //csvreader
+
+                //ashna's code
+                String[] line = reader.readNext();
+                while ((line = reader.readNext()) != null) {
+                    // Split the line into different tokens (using the comma as a separator).
+                    // String[] tokens = line.split(",");
+                    Log.d("FILE READER CSV","CSV " + line[0] + line[1]);
+
+                    String full_building_name = line[0];
+                    String building_name = line[1];
+                    String building_cap = line[2];
+                    //map.put(building_name, building_cap);
+                    addNewBuildingCheckDB(full_building_name, building_name, building_cap);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "File not formatted properly", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else{
             Log.d("Doc", "BAD ERROR");
         }
     }
-
 
     public void checkBuildingMap(String building_name, String building_cap){
         // check if building exists in db
@@ -204,6 +248,7 @@ public class NavActivity extends AppCompatActivity {
             }
         });
     }
+
     public void changeDatabaseCapacity(String newcap, String bName ){
         Log.d("in change cap", "in change cap " + bName + " " + newcap);
         DocumentReference currDoc = db.collection("buildings").document(bName);
@@ -222,6 +267,47 @@ public class NavActivity extends AppCompatActivity {
                         Log.w("Doc", "Error writing document - change capacity", e);
                     }
                 });
+    }
+
+    public void addNewBuildingCheckDB(String full_building_name, String name, String cap){
+        // check if building exists in db
+        DocumentReference docIdRef = db.collection("buildings").document(name);
+        docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (!document.exists()) {
+                        // ADD NEW BUILDING
+//                        String currErr = (String) errortxt.getText();
+//                        errortxt.setText(currErr + "\n" + building_name + " Building does not exist - Check file");
+                        addNewBuilding(full_building_name, name, cap);
+                        Log.d("document", "Document does not exist!");
+                    }
+
+                    else {
+                        String currErr = (String) errortxt.getText();
+                        errortxt.setText(currErr + "\n" + name + "Building already exists - Check file");
+
+                        Log.d("Document", "Document exists!");
+
+                    }
+                } else {
+                    Log.d("document", "Failed with: ", task.getException());
+                }
+            }
+        });
+    }
+    public void addNewBuilding(String full_building_name, String name, String cap){
+        Log.d("in new  build", "in new build " + name + " " + cap);
+        Building newBuilding = new Building(full_building_name, "0", cap, new ArrayList<>(), name,  name);
+
+        db.collection("buildings").document(name).set(newBuilding);
+
+        String currErr = (String) errortxt.getText();
+        errortxt.setText(currErr + "\n" + name + " Building has been added");
+
+
     }
 
 }

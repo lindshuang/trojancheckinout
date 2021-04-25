@@ -1,3 +1,4 @@
+
 package cs310.trojancheckinout;
 
 import androidx.annotation.NonNull;
@@ -30,9 +31,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.google.firebase.storage.FirebaseStorage;
@@ -116,12 +114,12 @@ public class ProfileActivity extends AppCompatActivity {
         if(bundle.getString("Source").compareTo("CurrUser") != 0 ){
             Log.d("DEBUG", "it's not null");
             String potCurrEmail = bundle.getString("Source");
-           // if(potCurrEmail.compareTo("Occupants") == 0){
-                Log.d("DEBUG", "it's coming from occupants");
-                isCurrUser = false;
-                currEmail = bundle.getString("email");
-                Log.d("DEBUG", currEmail);
-           // }
+            // if(potCurrEmail.compareTo("Occupants") == 0){
+            Log.d("DEBUG", "it's coming from occupants");
+            isCurrUser = false;
+            currEmail = bundle.getString("email");
+            Log.d("DEBUG", currEmail);
+            // }
         }
         //When it is the current user, just use shared data
         else {
@@ -282,52 +280,6 @@ public class ProfileActivity extends AppCompatActivity {
                         }
                     });
 
-                    //Get Current Checked in Building for User and display
-                    DocumentReference docIdRef = db.collection("users").document(currEmail);
-                    docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot document = task.getResult();
-                                List<String> histories = (List<String>) document.get("histories");
-                                if (!document.exists()) {
-                                    Log.d("document", "Document does not exist!");
-                                }
-                                else {
-                                    Log.d("Document", "Document exists!");
-                                    //look at last object in list of histories
-                                    int history_size = histories.size();
-                                    if(history_size > 0 && histories != null) {
-                                        String last_history = histories.get(histories.size()-1); //1anyanutakki@usc.edu
-                                        Log.d("Last history", "Last History is " + last_history);
-                                        //check histories collection by passing in concatenated email
-                                        DocumentReference docIdRef = db.collection("history").document(last_history);
-                                        docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    DocumentSnapshot document = task.getResult();
-                                                    String last_building = document.getString("buildingName");
-
-                                                    //UPDATE UI
-                                                    if (currUser.isChecked_in()){
-                                                        checkedIn.setText("Currently Checked Into " + last_building);
-                                                    }else{
-                                                        checkedIn.setText("Currently Checked Out");
-                                                    }
-                                                } else {
-                                                    Log.d("document", "Failed with: ", task.getException());
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            } else {
-                                Log.d("document", "Failed with: ", task.getException());
-                            }
-                        }
-                    });
-
                     //Dialog for Picture Link
                     final AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this)
                             .setPositiveButton("OK", null);
@@ -441,15 +393,6 @@ public class ProfileActivity extends AppCompatActivity {
                         }
                     });
 
-                    //Click CSV BUTTON(TEMP)
-//                    csvButton.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            Intent profileActivityIntent = new Intent(ProfileActivity.this, CsvActivity.class);
-//                            startActivity(profileActivityIntent);
-//                        }
-//                    });
-
                     //Click Delete Account Button
                     deleteAccount.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -482,11 +425,12 @@ public class ProfileActivity extends AppCompatActivity {
                             Intent profileActivityIntent = new Intent(ProfileActivity.this, HistoryActivity.class);
                             Log.d("CHANGIN", "CHNG"+ currEmail);
                             //profileActivityIntent.putExtra("Source","Occupants");
-                           // profileActivityIntent.putExtra("email",search_results.get(position).getEmail());
+                            // profileActivityIntent.putExtra("email",search_results.get(position).getEmail());
                             profileActivityIntent.putExtra("email", currEmail);
                             startActivity(profileActivityIntent);
                         }
                     });
+
 
                     //Click Edit Profile Pic from Gallery
                     editProfileGalleryButton.setOnClickListener(new View.OnClickListener() {
@@ -535,73 +479,6 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    //Edit Profile Pic from Gallery
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        //Detects request codes
-        if(requestCode==GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
-            Uri selectedImage = data.getData();
-            Bitmap bitmap = null;
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                profilePicView.setImageBitmap(bitmap);
-                uploadPic(); //call upload pic function to upload to firebase storage
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-    }
-
-    protected void uploadPic(){
-        profilePicView.setDrawingCacheEnabled(true);
-        profilePicView.buildDrawingCache();
-        Bitmap bitmap = ((BitmapDrawable) profilePicView.getDrawable()).getBitmap();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] data = baos.toByteArray();
-
-        //create upload task
-        String path = "profilepics/" + UUID.randomUUID() + ".png";
-        Log.d("Doc", "storage path: " + path);
-        StorageReference profilePicRef = storage.getReference(path);
-        UploadTask uploadTask = profilePicRef.putBytes(data);
-
-        uploadTask.addOnSuccessListener(ProfileActivity.this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                profilePicRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Uri downloadUrl = uri;
-                        String urlString = downloadUrl.toString();
-                        Log.d("Doc", "download URL: " + urlString);
-
-                        //upload into firebase Storage
-                        DocumentReference currDoc = db.collection("users").document(currEmail);
-                        currDoc.update("profilePicture", urlString)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d("Doc", "DocumentSnapshot successfully written!");
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.w("Doc", "Error writing document", e);
-                                }
-                            });
-                    }
-                });
-            }
-        });
-    }
 
     //Edit Profile Pic from Gallery
     @Override
@@ -707,8 +584,7 @@ public class ProfileActivity extends AppCompatActivity {
         Log.d("test", picLink);
         Picasso.get().load(picLink).into(profilePicView, new Callback() {
             @Override
-            public void onSuccess() {
-                DocumentReference currDoc = db.collection("users").document(currEmail);
+            public void onSuccess() { DocumentReference currDoc = db.collection("users").document(currEmail);
                 currDoc.update("profilePicture", picLink)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override

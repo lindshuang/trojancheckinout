@@ -27,3 +27,5 @@ local.properties
 *.bin
 *.lock
 *.bin
+*.bin
+*.lock

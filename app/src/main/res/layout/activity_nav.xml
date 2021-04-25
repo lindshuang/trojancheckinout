@@ -21,27 +21,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Check In or Check Out"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="80dp"
         android:layout_marginHorizontal="10dp"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="10dp"/>
 
     <Button
         android:id="@+id/profile_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Show Profile"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:layout_marginHorizontal="10dp"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="10dp"/>
 
     <Button
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Show Buildings"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:layout_marginHorizontal="10dp"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="10dp"/>
 
 
         <Button
@@ -49,18 +49,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Search Students"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="20dp"
             android:layout_marginHorizontal="10dp"
-            android:layout_marginBottom="20dp"/>
+            android:layout_marginBottom="10dp"/>
 
         <Button
             android:id="@+id/csv_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="CSV"
-            android:layout_marginTop="50dp"
+            android:text="Edit Building Capacity with CSV"
+            android:layout_marginTop="20dp"
             android:layout_marginHorizontal="10dp"
-            android:layout_marginBottom="20dp"/>
+            android:layout_marginBottom="10dp"/>
+
+        <Button
+            android:id="@+id/csv_add_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Building with CSV"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginBottom="10dp"/>
 
         <TextView
             android:layout_width="match_parent"
