@@ -436,7 +436,10 @@ public class ProfileActivity extends AppCompatActivity {
                     editProfileGalleryButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
+                            Intent mediaIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                            mediaIntent.setType("*/*"); // Set MIME type as per requirement
+                            startActivityForResult(mediaIntent,GET_FROM_GALLERY);
+                            //startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
                         }
                     });
 
