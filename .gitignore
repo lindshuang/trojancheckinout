@@ -35,3 +35,5 @@ local.properties
 .gradle/6.1.1/executionHistory/executionHistory.bin
 *.lock
 *.bin
+*.bin
+*.lock
