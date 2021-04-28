@@ -11,11 +11,11 @@
     </string-array>
     <string-array name="buildings">
         <item></item>
-        <item>CI</item>
-        <item>DHE</item>
-        <item>SAL</item>
-        <item>JFF</item>
-        <item>TCC</item>
-        <item>THH</item>
+        <item>Cale and Irani</item>
+        <item>Doheny</item>
+        <item>Salvatori</item>
+        <item>Fertitta Hall</item>
+        <item>Tutor Campus Center</item>
+        <item>Taper Hall</item>
     </string-array>
 </resources>
