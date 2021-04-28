@@ -31,3 +31,5 @@ local.properties
 *.lock
 .gradle/6.1.1/executionHistory/executionHistory.bin
 .gradle/buildOutputCleanup/buildOutputCleanup.lock
+*.bin
+*.lock

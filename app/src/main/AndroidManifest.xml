@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EditCapacity"></activity>
+        <activity android:name=".AddBuilding"></activity>
+        <activity android:name=".EditCapacity" />
         <activity android:name=".ShowOccupantsActivity" />
         <activity android:name=".displaySearchResults" />
         <activity android:name=".SearchStudents" />

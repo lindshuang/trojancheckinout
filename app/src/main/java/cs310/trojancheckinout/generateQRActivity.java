@@ -27,23 +27,31 @@ public class generateQRActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_generate_q_r);
 
-        EditText buildingCodeInput = (EditText) findViewById(R.id.building_code_editText);
-        Button QRButton = (Button) findViewById(R.id.qr_button);
+        String buildingCodeInput = buildingData.getBuildingCode();
         ImageView imageView = (ImageView) findViewById(R.id.qrCode);
 
+        try {
+            Bitmap bitmap = encodeAsBitmap(buildingCodeInput);
+            imageView.setImageBitmap(bitmap);
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+        /*
         QRButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("QR", "button Clicked");
                 //editProfilePic(picEditText)
                 try {
-                    Bitmap bitmap = encodeAsBitmap(buildingCodeInput.getText().toString());
+                    Bitmap bitmap = encodeAsBitmap(buildingCodeInput);
                     imageView.setImageBitmap(bitmap);
                 } catch (WriterException e) {
                     e.printStackTrace();
                 }
             }
         });
+        */
+
 
     } //end onCreate
 

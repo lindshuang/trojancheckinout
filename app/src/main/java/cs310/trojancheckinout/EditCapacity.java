@@ -30,14 +30,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class EditCapacity extends AppCompatActivity {
+
     Button updateButton;
     EditText capacity_edit;
     TextView buildingNameTextView;
+    String capacity;
 
-    private String capacity;
-    private int currCapValue = Integer.parseInt(buildingData.getCurrCapacity());
-    private String buildingCode = buildingData.getBuildingCode();
-    private String buildingName = buildingData.getBuildingName();
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -48,13 +46,23 @@ public class EditCapacity extends AppCompatActivity {
         updateButton = (Button) findViewById(R.id.updateButton);
         capacity_edit = (EditText) findViewById(R.id.capacity_edit);
         buildingNameTextView = (TextView) findViewById(R.id.buildingName);
+
+        String buildingCode = buildingData.getBuildingCode();
+        String buildingName = buildingData.getBuildingName();
+        String currCapValueString = buildingData.getCurrCapacity();
+        Log.d("edit 1", "buildingCode: " + buildingCode);
+        Log.d("edit 1", "buildingName: " + buildingName);
+        Log.d("edit 1", "currCapValue: " + currCapValueString);
+
         buildingNameTextView.setText(buildingName + "(" + buildingCode + ")");
+
 
         capacity_edit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 capacity = capacity_edit.getText().toString();
-                int newMaxCapValue = Integer.parseInt(capacity);
+                double newMaxCapValue = Double.parseDouble(capacity);
+                double currCapValue = Double.parseDouble(currCapValueString);
                 if(capacity.length() <= 1){
                     capacity_edit.setError("Enter new capacity");
                 }
@@ -70,11 +78,12 @@ public class EditCapacity extends AppCompatActivity {
             public void onClick(View view) {
 
                 capacity = capacity_edit.getText().toString();
-                int newMaxCapValue = Integer.parseInt(capacity);
+                double newMaxCapValue = Double.parseDouble(capacity);
+                double currCapValue = Double.parseDouble(currCapValueString);
 
                 Log.d("edit", "curr cap is " + currCapValue);
                 Log.d("edit", "new max cap is " + capacity);
-                Log.d("edit", "new max cap integer version is " + newMaxCapValue);
+                Log.d("edit", "new max cap double version is " + newMaxCapValue);
 
                 if((capacity.length() >= 1) && (newMaxCapValue > currCapValue)) {
                     Log.d("edit", "about to update capacity ");
@@ -94,6 +103,8 @@ public class EditCapacity extends AppCompatActivity {
                                     Log.w("error updating capacity", "Error updating document", e);
                                 }
                             });
+                    Intent update_intent = new Intent(EditCapacity.this, ShowAllBuildingsActivity.class);
+                    startActivityForResult(update_intent, 0);
 //
                 }
                 else if(newMaxCapValue <= currCapValue){
@@ -104,6 +115,7 @@ public class EditCapacity extends AppCompatActivity {
                 }
             }
         });
-
     }
+
+
 }

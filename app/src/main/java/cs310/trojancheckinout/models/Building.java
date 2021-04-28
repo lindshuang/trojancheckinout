@@ -70,5 +70,15 @@ public class Building {
 //        this.buildingCode = buildingCode;
     }
 
+    public Building(String buildingName, String currCapacity, String maxCapacity, List<String> occupants, String qrCode) {
+        this.buildingName = buildingName;
+        this.currCapacity = currCapacity;
+        this.maxCapacity = maxCapacity;
+        this.occupants = occupants;
+        this.QRcode = qrCode;
+//        this.buildingCode = buildingCode;
+    }
+
+
 
 }
