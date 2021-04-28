@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +42,10 @@ public class NavActivity extends AppCompatActivity {
     String role = "";
     Map<String,String> map = new HashMap<String, String>();
     boolean isAddBuildingCSVClicked = false;
+
+    private LinearLayout popupMsg;
+    public TextView close_message;
+    private Button closePopupbutton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,6 +179,18 @@ public class NavActivity extends AppCompatActivity {
                     Log.d("iterator", pair.getKey() + " = " + pair.getValue());
                     checkBuildingMap((String)pair.getKey(), (String)pair.getValue());
                 }
+
+                popupMsg.setVisibility(View.VISIBLE);
+
+                closePopupbutton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        popupMsg.setVisibility(View.INVISIBLE);
+                        close_message.setText("");
+
+                        map.clear();
+                    }
+                });
             }
 
         }
@@ -222,8 +239,8 @@ public class NavActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (!document.exists()) {
                         // SHOW ERROR
-                        String currErr = (String) errortxt.getText();
-                        errortxt.setText(currErr + "\n" + building_name + " Building does not exist - Check file");
+                        String currErr = (String) close_message.getText();
+                        close_message.setText(currErr + "\n" + building_name + " Building does not exist - Check file");
                         Log.d("document", "Document does not exist!");
                     }
 
@@ -232,8 +249,10 @@ public class NavActivity extends AppCompatActivity {
                         double curcap = Double.parseDouble(cur_cap);
                         int newbuildingcap = Integer.parseInt(building_cap);
                         if(newbuildingcap < curcap){
-                            String currErr = (String) errortxt.getText();
-                            errortxt.setText(currErr + "\n" + building_name + "Current building capacity is greater than new capacity - Check file");
+                            String currErr = (String) close_message.getText();
+                            close_message.setText(currErr + "\n" + building_name + "Current building capacity is greater than new capacity - Check file");
+                            Log.d("document", "check file cannot update");
+
                         }
                         else{
 
@@ -256,9 +275,11 @@ public class NavActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        String currErr = (String) errortxt.getText();
-                        errortxt.setText(currErr + "\n" + bName + " Capacity changed");
-                        Log.d("Doc", "DocumentSnapshot successfully written! - change capacity");
+                        String currErr = (String) close_message.getText();
+                        // message =  currErr + "\n" + bName + " Capacity changed";
+                        close_message.setText(currErr + "\n" + bName + " Capacity changed");
+
+                        Log.d("Doc", "DocumentSnapshot successfully written! - change capacity asdf");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
