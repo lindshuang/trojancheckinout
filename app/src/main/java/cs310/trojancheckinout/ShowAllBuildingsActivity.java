@@ -52,13 +52,15 @@ public class ShowAllBuildingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_all_buildings);
 
-        Button makeQRButton = (Button) findViewById(R.id.building_make_QR);
+        Button addBuildingButton = (Button) findViewById(R.id.add_building);
 
-        makeQRButton.setOnClickListener(new View.OnClickListener() {
+
+
+        addBuildingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent MakeQRIntent = new Intent(ShowAllBuildingsActivity.this, generateQRActivity.class);
-                startActivity(MakeQRIntent);
+                Intent AddIntent = new Intent(ShowAllBuildingsActivity.this, AddBuilding.class);
+                startActivity(AddIntent);
             }
         });
 
@@ -94,7 +96,21 @@ public class ShowAllBuildingsActivity extends AppCompatActivity {
                         buildingData.setBuildingName(building.getBuildingName());
                         buildingData.setBuildingCode(building.getQRcode());
                         buildingData.setCurrCapacity(building.getCurrCapacity());
-                        Intent intent = new Intent(ShowAllBuildingsActivity.this, EditCapacity.class);
+                        Log.d("edit 1", "buildingName: " + building.getBuildingName());
+                        Log.d("edit 1", "qrcode: " + building.getQRcode());
+                        Log.d("edit 1", "currcap: " + building.getCurrCapacity());
+
+                        Intent update_intent = new Intent(ShowAllBuildingsActivity.this, EditCapacity.class);
+                        startActivityForResult(update_intent, 0);
+                    }
+                });
+
+                buildingViewHolder.showQR_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        buildingData.setBuildingName(building.getBuildingName());
+                        buildingData.setBuildingCode(building.getQRcode());
+                        Intent intent = new Intent(ShowAllBuildingsActivity.this, generateQRActivity.class);
                         startActivityForResult(intent, 0);
                     }
                 });
@@ -114,6 +130,7 @@ public class ShowAllBuildingsActivity extends AppCompatActivity {
         private TextView curr_capacity_value;
         private TextView max_capacity_value;
         private Button updateCapacity_button;
+        private Button showQR_button;
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         ArrayList<String> occupantNames;
@@ -131,6 +148,7 @@ public class ShowAllBuildingsActivity extends AppCompatActivity {
             curr_capacity_value = itemView.findViewById(R.id.curr_capacity_value);
             max_capacity_value = itemView.findViewById(R.id.max_capacity_value);
             updateCapacity_button = itemView.findViewById(R.id.updateCapacity_button);
+            showQR_button = itemView.findViewById(R.id.showQR_button);
 
             itemView.findViewById(R.id.occupants_button).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -147,6 +165,8 @@ public class ShowAllBuildingsActivity extends AppCompatActivity {
                 }
 
             });
+
+
 
         }
 

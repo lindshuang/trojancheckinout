@@ -98,6 +98,7 @@ public class QRScanner extends AppCompatActivity {
     private String timeIn_db = "";
     private boolean checkedIn;
     private boolean validCode = false;
+    private String current_qr;
 
     double current_cap;
     double max_cap;
@@ -310,10 +311,15 @@ public class QRScanner extends AppCompatActivity {
                 //Change text for Confirm Check In
                 String check = checkStatus();
                 Log.d("check", "check is " + check);
-                if (check.compareTo("checked in") == 0)
+                if (check.compareTo("checked in") == 0  && (qrCode.compareTo(current_qr) == 0))
                 {
                     checkedIn = true;
                     confirm_pop_up_id.setText("You are already checked in. Please confirm check out.");
+                }
+                else if (check.compareTo("checked in") == 0  && (qrCode.compareTo(current_qr) != 0))
+                {
+                    checkedIn = true;
+                    confirm_pop_up_id.setText("Invalid QR Code.");
                 }
                 else if (check.compareTo("checked out") == 0)
                 {
@@ -387,6 +393,7 @@ public class QRScanner extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     boolean status = document.getBoolean("checked_in");
+                    String qr = document.getString("current_qr");
                     if (!document.exists()) {
                         Log.d("document", "Document does not exist!");
 
@@ -399,6 +406,7 @@ public class QRScanner extends AppCompatActivity {
                         else if(status == false) {
                             result = "checked out";
                         }
+                        current_qr = qr;
                     }
                 } else {
                     Log.d("document", "Failed with: ", task.getException());
@@ -915,8 +923,5 @@ public class QRScanner extends AppCompatActivity {
         Log.d("madeIt", "made it past occupants update");
 
     }
-
-
-
 
 }

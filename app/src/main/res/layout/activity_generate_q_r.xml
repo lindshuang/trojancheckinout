@@ -16,28 +16,9 @@
         <ImageView
             android:id="@+id/qrCode"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_launcher_background"
-            />
+            android:layout_height="281dp"
+            android:src="@drawable/ic_launcher_background" />
 
-        <EditText
-            android:id="@+id/building_code_editText"
-            android:paddingTop="40dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter Building Code"
-            />
-
-
-        <Button
-            android:id="@+id/qr_button"
-            android:title="Generate QR"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Generate QR"
-            android:layout_marginTop="50dp"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginBottom="20dp"/>
 
     </LinearLayout>
 
