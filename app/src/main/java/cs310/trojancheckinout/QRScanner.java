@@ -319,7 +319,18 @@ public class QRScanner extends AppCompatActivity {
                 else if (check.compareTo("checked in") == 0  && (qrCode.compareTo(current_qr) != 0))
                 {
                     checkedIn = true;
-                    confirm_pop_up_id.setText("Invalid QR Code.");
+                    pop_up_id.setVisibility(View.INVISIBLE);
+                    invalid_pop_up_id.setVisibility(View.VISIBLE);
+                    invalid_text_id.setText("Invalid QR Code.");
+
+                    ok_b_id.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            //navigate to check in page
+                            invalid_pop_up_id.setVisibility(View.INVISIBLE);
+                            Intent intent = new Intent(QRScanner.this, CheckIn.class);
+                            startActivityForResult(intent, 0);
+                        }
+                    });
                 }
                 else if (check.compareTo("checked out") == 0)
                 {
