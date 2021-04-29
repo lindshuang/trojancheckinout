@@ -1,5 +1,7 @@
 package cs310.trojancheckinout.models;
 
+import com.google.firebase.firestore.PropertyName;
+
 import java.util.List;
 
 
@@ -37,10 +39,12 @@ public class Building {
         this.currCapacity = currCapacity;
     }
 
+    @PropertyName("QRcode")
     public String getQRcode() {
         return QRcode;
     }
 
+    @PropertyName("QRcode")
     public void setQRcode(String QRcode) {
         this.QRcode = QRcode;
     }
