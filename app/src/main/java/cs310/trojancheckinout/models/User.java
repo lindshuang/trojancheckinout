@@ -15,6 +15,7 @@ public class User {
     private String profilePicture;
     private List<History> histories;
     private boolean checked_in;
+    private boolean kicked_out;
 
     private String current_qr;
 
@@ -30,6 +31,7 @@ public class User {
         histories = new ArrayList<>();
         current_qr = "";
         is_deleted = false;
+        kicked_out = false;
     }
     public User(String firstName, String lastName, String email, String password, boolean checked_in) {
         this.firstName = firstName;
@@ -40,6 +42,7 @@ public class User {
         this.profilePicture = "https://st.depositphotos.com/1779253/5140/v/600/depositphotos_51405259-stock-illustration-male-avatar-profile-picture-use.jpg";
         this.current_qr = "";
         is_deleted = false;
+        kicked_out = false;
     }
     // For Student
     public User(String fN, String lN,String eml,String pswd, String stuID, String major){
@@ -54,6 +57,7 @@ public class User {
         profilePicture = "https://st.depositphotos.com/1779253/5140/v/600/depositphotos_51405259-stock-illustration-male-avatar-profile-picture-use.jpg";
         current_qr = "";
         is_deleted = false;
+        kicked_out = false;
     }
     // For Manager
     public User(String fN, String lN,String eml,String pswd){
@@ -68,6 +72,7 @@ public class User {
         profilePicture = "https://st.depositphotos.com/1779253/5140/v/600/depositphotos_51405259-stock-illustration-male-avatar-profile-picture-use.jpg";
         current_qr = "";
         is_deleted = false;
+        kicked_out = false;
     }
 
     public User(String firstName, String lastName, String email, String password, boolean checked_in, String occupation, String studentID, String profilePicture, String current_qr) {
@@ -81,6 +86,7 @@ public class User {
         this.profilePicture = profilePicture;
         this.current_qr = current_qr;
         is_deleted = false;
+        kicked_out = false;
     }
 
     public String getFirstName() {
@@ -169,6 +175,14 @@ public class User {
 
     public void setIs_deleted(boolean is_deleted) {
         this.is_deleted = is_deleted;
+    }
+
+    public boolean isKicked_out() {
+        return kicked_out;
+    }
+
+    public void setKicked_out(boolean kicked_out) {
+        this.kicked_out = kicked_out;
     }
 
 
