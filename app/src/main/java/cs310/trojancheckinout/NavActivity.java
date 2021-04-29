@@ -58,6 +58,10 @@ public class NavActivity extends AppCompatActivity {
         Button csvAddButton = (Button) findViewById(R.id.csv_add_button);
         errortxt = findViewById(R.id.errortxt);
 
+        popupMsg = findViewById(R.id.pop_up_csv);
+        close_message= findViewById(R.id.close_message_csv);
+        closePopupbutton = findViewById(R.id.closePopupbutton_csv);
+
         DocumentReference docIdRef2 = db.collection("users").document(sharedData.getCurr_email());
 
         docIdRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -225,6 +229,19 @@ public class NavActivity extends AppCompatActivity {
                 e.printStackTrace();
                 Toast.makeText(this, "File not formatted properly", Toast.LENGTH_SHORT).show();
             }
+            finally{
+                popupMsg.setVisibility(View.VISIBLE);
+
+                closePopupbutton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        popupMsg.setVisibility(View.INVISIBLE);
+                        close_message.setText("");
+
+                        map.clear();
+                    }
+                });
+            }
         }
         else{
             Log.d("Doc", "BAD ERROR");
@@ -310,8 +327,8 @@ public class NavActivity extends AppCompatActivity {
 
                     else {
                         String currErr = (String) errortxt.getText();
-                        errortxt.setText(currErr + "\n" + name + "Building already exists - Check file");
-
+                        //errortxt.setText(currErr + "\n" + name + "Building already exists - Check file");
+                        close_message.setText(currErr + "\n" + name + "Building already exists - Check file");
                         Log.d("Document", "Document exists!");
 
                     }
@@ -328,9 +345,11 @@ public class NavActivity extends AppCompatActivity {
         db.collection("buildings").document(name).set(newBuilding);
 
         String currErr = (String) errortxt.getText();
-        errortxt.setText(currErr + "\n" + name + " Building has been added");
-
+        //errortxt.setText(currErr + "\n" + name + " Building has been added");
+        close_message.setText(currErr + "\n" + name + " Building has been added");
 
     }
+
+
 
 }
