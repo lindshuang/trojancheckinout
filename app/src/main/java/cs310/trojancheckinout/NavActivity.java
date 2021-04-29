@@ -74,10 +74,12 @@ public class NavActivity extends AppCompatActivity {
                         showBuildingsButton.setVisibility(View.VISIBLE);
                         searchStudentsButton.setVisibility(View.VISIBLE);
                         csvButton.setVisibility(View.VISIBLE);
+                        csvAddButton.setVisibility(View.VISIBLE);
                     } else {
                         showBuildingsButton.setVisibility(View.INVISIBLE);
                         searchStudentsButton.setVisibility(View.INVISIBLE);
                         csvButton.setVisibility(View.INVISIBLE);
+                        csvAddButton.setVisibility(View.INVISIBLE);
                     }
                 }
             }
