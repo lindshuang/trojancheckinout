@@ -374,6 +374,22 @@ public class ProfileActivity extends AppCompatActivity {
                         public void onClick(View v) {
                             pop_up_kick_out.setVisibility(View.INVISIBLE);
                             checkOut();
+                            //update kickout for student
+                            DocumentReference checkOutRef = db.collection("users").document(currEmail);
+                            checkOutRef
+                                    .update("kicked_out", true)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d("updating kicked out", "DocumentSnapshot successfully updated!");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w("error updating time out date", "Error updating document", e);
+                                        }
+                                    });
 
                             //navigate back to checkin page
                             Intent checkOutIntent = new Intent(ProfileActivity.this, SearchStudents.class);

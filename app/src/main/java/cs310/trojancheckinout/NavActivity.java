@@ -4,9 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +27,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.opencsv.CSVReader;
+import android.os.Handler;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +52,13 @@ public class NavActivity extends AppCompatActivity {
     private LinearLayout popupMsg;
     public TextView close_message;
     private Button closePopupbutton;
+    public Handler mHandler;
+    private boolean kicked_out;
+
+    LinearLayout pop_up_id;
+    Button ok_id;
+
+    //NotificationManager NM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +70,14 @@ public class NavActivity extends AppCompatActivity {
         Button csvButton = (Button) findViewById(R.id.csv_button);
         Button csvAddButton = (Button) findViewById(R.id.csv_add_button);
         errortxt = findViewById(R.id.errortxt);
+        ok_id = (Button) findViewById(R.id.okButton);
+        pop_up_id = (LinearLayout) findViewById(R.id.pop_up_kick);
 
+        //NM =(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         popupMsg = findViewById(R.id.pop_up_csv);
         close_message= findViewById(R.id.close_message_csv);
         closePopupbutton = findViewById(R.id.closePopupbutton_csv);
-
+        Context context = getApplicationContext();
         DocumentReference docIdRef2 = db.collection("users").document(sharedData.getCurr_email());
 
         docIdRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -70,6 +86,8 @@ public class NavActivity extends AppCompatActivity {
                 userDoc = task.getResult();
                 if (task.isSuccessful()) {
                     role = userDoc.getString("occupation");
+                    kicked_out = userDoc.getBoolean("kicked_out");
+                    Log.d("value", "kicked_out = " + kicked_out);
                     if(role.compareTo("Manager")==0) {
                         showBuildingsButton.setVisibility(View.VISIBLE);
                         searchStudentsButton.setVisibility(View.VISIBLE);
@@ -80,6 +98,53 @@ public class NavActivity extends AppCompatActivity {
                         searchStudentsButton.setVisibility(View.INVISIBLE);
                         csvButton.setVisibility(View.INVISIBLE);
                         csvAddButton.setVisibility(View.INVISIBLE);
+                    }
+                    //IF STUDENT IS KICKED OUT, SET PUSH NOTIFICATION
+                    if(kicked_out == true) {
+                        Log.d("kicked out", "in kicked out loop");
+                        //Create push notification
+                        /*
+                        CharSequence text = "You are kicked out.";
+                        int duration = Toast.LENGTH_SHORT;
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                        try {
+                            Thread.sleep(6000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                         */
+                        //Click Kick Out Button
+                        pop_up_id.setVisibility(View.VISIBLE);
+                        ok_id.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Log.d("kick", "kick out Clicked notification");
+                                pop_up_id.setVisibility(View.INVISIBLE);
+
+                                //set kicked out to false
+                                DocumentReference checkOutRef = db.collection("users").document(sharedData.getCurr_email());
+                                checkOutRef
+                                        .update("kicked_out", false)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d("updating kicked out", "DocumentSnapshot successfully updated!");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w("error updating time out date", "Error updating document", e);
+                                            }
+                                        });
+                                Intent profileActivityIntent = new Intent(NavActivity.this, NavActivity.class);
+                                startActivityForResult(profileActivityIntent, 0);
+
+
+                            }
+                        });
                     }
                 }
             }
@@ -143,6 +208,29 @@ public class NavActivity extends AppCompatActivity {
                 startActivityForResult(mediaIntent,GET_FROM_GALLERY);
             }
         });
+
+
+        //refresh
+        this.mHandler = new Handler();
+        this.mHandler.postDelayed(m_Runnable,5000);
+    }
+    //refresh page
+
+    private final Runnable m_Runnable = new Runnable() {
+        public void run() {
+            NavActivity.this.mHandler.postDelayed(m_Runnable, 30000);
+            Intent intent = new Intent(NavActivity.this, NavActivity.class);
+            startActivity(intent);
+        }
+
+    };//runnable
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mHandler.removeCallbacks(m_Runnable);
+        finish();
+
     }
 
     @Override
