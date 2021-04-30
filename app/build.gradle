@@ -108,6 +108,17 @@ dependencies {
     //csv
     implementation 'com.opencsv:opencsv:4.6'
 
+    //messaging
+    //Firebase Authentication
+    implementation 'com.google.firebase:firebase-auth:11.4.0'
 
+    //Firebase Realtime Database
+    implementation 'com.google.firebase:firebase-database:11.4.0'
 
+    //Firebase Cloud Messaging
+    implementation 'com.google.firebase:firebase-messaging:17.5.0'
+
+    //volley
+    implementation 'com.android.volley:volley:1.2.0'
 }
+apply plugin: 'com.google.gms.google-services'

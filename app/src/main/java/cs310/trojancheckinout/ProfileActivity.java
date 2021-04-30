@@ -23,7 +23,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -31,25 +36,33 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.BreakIterator;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Formatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 
 import cs310.trojancheckinout.models.Building;
+import cs310.trojancheckinout.models.MySingleton;
 import cs310.trojancheckinout.models.User;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -98,6 +111,17 @@ public class ProfileActivity extends AppCompatActivity {
 
     LinearLayout pop_up_kick_out;
 
+    //send message
+    final private String FCM_API = "https://fcm.googleapis.com/fcm/send";
+    final private String serverKey = "key=" + "AAAAWC9rAQE:APA91bEZVyD0RkInqgUPIqkgar5GbaVbJh9_8ItVYxJMXdwcs6xYVpyxvpEyXCoRMCjfTzqnouVf84PTJ3IgRkurmqLbxq_5fbO26sYdX0EMMrZ-WmRWljsjjfn23Z8Ne7rmqy4pmNX6";
+    final private String contentType = "application/json";
+    final String TAG = "NOTIFICATION TAG";
+    private static final String SUBSCRIBE_TO = "userABC";
+
+    String NOTIFICATION_TITLE;
+    String NOTIFICATION_MESSAGE;
+    String TOPIC;
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -129,6 +153,23 @@ public class ProfileActivity extends AppCompatActivity {
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+
+                        // Get new FCM registration token
+                        String token = task.getResult();
+                        FirebaseMessaging.getInstance().subscribeToTopic(SUBSCRIBE_TO);
+                        Log.d(TAG, "onTokenRefresh completed with token: " + token);
+                    }
+                });
 
 
         //create user object since we need almost all the info
@@ -169,6 +210,7 @@ public class ProfileActivity extends AppCompatActivity {
                     Button kick_out_b_id = findViewById(R.id.button_kick_out);
                     Button confirmKickOut_b_id = findViewById(R.id.confirmKickOutButton);
                     Button cancelKickOut_b_id = findViewById(R.id.cancelKickOutButton);
+                    Button send_msg = findViewById(R.id.button_send_message);
 
                     //pop up
                     pop_up_id = (LinearLayout) findViewById(R.id.pop_up);
@@ -435,6 +477,29 @@ public class ProfileActivity extends AppCompatActivity {
                         }
                     });
 
+                    //send message button
+                    send_msg.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            TOPIC = "/topics/userABC"; //topic must match with what the receiver subscribed to
+                            NOTIFICATION_TITLE = "HI THERE";
+                            NOTIFICATION_MESSAGE = "you're cicked out";
+
+                            JSONObject notification = new JSONObject();
+                            JSONObject notifcationBody = new JSONObject();
+                            try {
+                                notifcationBody.put("title", NOTIFICATION_TITLE);
+                                notifcationBody.put("message", NOTIFICATION_MESSAGE);
+
+                                notification.put("to", TOPIC);
+                                notification.put("data", notifcationBody);
+                            } catch (JSONException e) {
+                                Log.e(TAG, "onCreate: " + e.getMessage() );
+                            }
+                            sendNotification(notification); //implement
+                        }
+                    });
+
 
                     //Click Edit Profile Pic from Gallery
                     editProfileGalleryButton.setOnClickListener(new View.OnClickListener() {
@@ -508,6 +573,35 @@ public class ProfileActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    //send message
+    private void sendNotification(JSONObject notification) {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(FCM_API, notification,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.i(TAG, "onResponse: " + response.toString());
+                        BreakIterator edtTitle;
+                        BreakIterator edtMessage;
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(ProfileActivity.this, "Request error", Toast.LENGTH_LONG).show();
+                        Log.i(TAG, "onErrorResponse: Didn't work");
+                    }
+                }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("Authorization", serverKey);
+                params.put("Content-Type", contentType);
+                return params;
+            }
+        };
+        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjectRequest);
     }
 
     protected void uploadPic(){

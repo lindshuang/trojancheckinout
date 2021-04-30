@@ -309,6 +309,17 @@
             android:textColor="#4D98A1"
             android:textSize="14sp" />
 
+        <Button
+            android:id="@+id/button_send_message"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="0dp"
+            android:text="Send Message"
+            android:textAlignment="viewStart"
+            android:textColor="#4D98A1"
+            android:textSize="14sp" />
+
 
         <Button
             android:id="@+id/button_edit_pic"
