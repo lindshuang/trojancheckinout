@@ -428,7 +428,7 @@ public class ProfileActivity extends AppCompatActivity {
                             checkOut();
 
                             //navigate back to checkin page
-                            Intent checkOutIntent = new Intent(ProfileActivity.this, SearchStudents.class);
+                            Intent checkOutIntent = new Intent(ProfileActivity.this, NavActivity.class);
                             startActivityForResult(checkOutIntent, 0);
 
                         }
