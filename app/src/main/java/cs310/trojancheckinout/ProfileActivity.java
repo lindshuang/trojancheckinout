@@ -174,6 +174,8 @@ public class ProfileActivity extends AppCompatActivity {
                                     });
                         }
                     });
+                }else{
+                    pop_up_profile.setVisibility(View.INVISIBLE);
                 }
             } else {
                 Log.d("Doc", "Current data: null");
