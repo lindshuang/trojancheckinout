@@ -8,6 +8,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 
 import java.time.LocalTime;
@@ -15,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
@@ -53,25 +57,57 @@ public class HistoryActivity extends AppCompatActivity {
         historyList = new ArrayList<>();
         adapter = new HistoryAdapter(histories);
         list.setAdapter(adapter);
-
-        //get user email
-//        Intent historyIntent = getIntent();
         bundle = getIntent().getExtras();
-        //currEmail = bundle.getString("email");
         currEmail = bundle.getString("email");
-//        if(bundle.getString("Source") != null){
-//            Log.d("DEBUG", "it's not null");
-//            String potCurrEmail = bundle.getString("Source");
-//            if(potCurrEmail.compareTo("Occupants") == 0){
-//                Log.d("DEBUG", "it's coming from occupants");
-//                currEmail = bundle.getString("email");
-//                Log.d("DEBUG", currEmail);
-//            }
-//        } else {
-//            //currEmail = bundle.getString("email"); //uncomment when you pass in bundle
-//            currEmail = sharedData.getCurr_email();
-//        }
-       // currEmail = sharedData.getCurr_email();
+
+        //start realtime updates
+        Button ok_id;
+        LinearLayout pop_up_id2;
+        ok_id = (Button) findViewById(R.id.okButton4);
+        pop_up_id2 = (LinearLayout) findViewById(R.id.pop_up_kick4);
+        final DocumentReference docRef = db.collection("users").document(sharedData.getCurr_email());
+        docRef.addSnapshotListener((snapshot, e) -> {
+            Log.d("Doc", "inside listener");
+            if (e != null) {
+                Log.d("Doc", "Listen failed.", e);
+                return;
+            }
+            if (snapshot != null && snapshot.exists()) {
+                Log.d("Doc", "Current data: " + snapshot.getData());
+                //UserList userList = documentSnapshot.toObject(UserList.class);
+                User tempUser = snapshot.toObject(User.class);
+                if (tempUser.isKicked_out()){
+                    //do stuff
+                    pop_up_id2.setVisibility(View.VISIBLE);
+                    ok_id.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.d("kick", "kick out Clicked notification");
+                            pop_up_id2.setVisibility(View.INVISIBLE);
+                            //set kicked out to false
+                            DocumentReference checkOutRef = db.collection("users").document(sharedData.getCurr_email());
+                            checkOutRef
+                                    .update("kicked_out", false)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d("updating kicked out", "DocumentSnapshot successfully updated!");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w("error updating time out date", "Error updating document", e);
+                                        }
+                                    });
+                        }
+                    });
+                }
+            } else {
+                Log.d("Doc", "Current data: null");
+            }
+        });
+
 
         DocumentReference docIdRef = db.collection("users").document(currEmail);
         docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

@@ -1,6 +1,7 @@
 package cs310.trojancheckinout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
@@ -25,9 +26,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.opencsv.CSVReader;
 import android.os.Handler;
+//import java.util.EventListener;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +40,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+//test notifications
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.MetadataChanges;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.Query.Direction;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.ServerTimestamp;
+import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.Source;
+import com.google.firebase.firestore.Transaction;
+import com.google.firebase.firestore.WriteBatch;
 
 import cs310.trojancheckinout.models.Building;
 import cs310.trojancheckinout.models.User;
@@ -80,6 +99,51 @@ public class NavActivity extends AppCompatActivity {
         Context context = getApplicationContext();
         DocumentReference docIdRef2 = db.collection("users").document(sharedData.getCurr_email());
 
+        //start realtime updates
+        final DocumentReference docRef = db.collection("users").document(sharedData.getCurr_email());
+        docRef.addSnapshotListener((snapshot, e) -> {
+            Log.d("Doc", "inside listener");
+            if (e != null) {
+                Log.d("Doc", "Listen failed.", e);
+                return;
+            }
+            if (snapshot != null && snapshot.exists()) {
+                Log.d("Doc", "Current data: " + snapshot.getData());
+                //UserList userList = documentSnapshot.toObject(UserList.class);
+                User tempUser = snapshot.toObject(User.class);
+                if (tempUser.isKicked_out()){
+                    //do stuff
+                    pop_up_id.setVisibility(View.VISIBLE);
+                    ok_id.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.d("kick", "kick out Clicked notification");
+                            pop_up_id.setVisibility(View.INVISIBLE);
+                            //set kicked out to false
+                            DocumentReference checkOutRef = db.collection("users").document(sharedData.getCurr_email());
+                            checkOutRef
+                                    .update("kicked_out", false)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d("updating kicked out", "DocumentSnapshot successfully updated!");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w("error updating time out date", "Error updating document", e);
+                                        }
+                                    });
+                        }
+                    });
+                }
+            } else {
+                Log.d("Doc", "Current data: null");
+            }
+        });
+
+
         docIdRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -100,52 +164,52 @@ public class NavActivity extends AppCompatActivity {
                         csvAddButton.setVisibility(View.INVISIBLE);
                     }
                     //IF STUDENT IS KICKED OUT, SET PUSH NOTIFICATION
-                    if(kicked_out == true) {
-                        Log.d("kicked out", "in kicked out loop");
-                        //Create push notification
-                        /*
-                        CharSequence text = "You are kicked out.";
-                        int duration = Toast.LENGTH_SHORT;
-                        Toast toast = Toast.makeText(context, text, duration);
-                        toast.show();
-                        try {
-                            Thread.sleep(6000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                         */
-                        //Click Kick Out Button
-                        pop_up_id.setVisibility(View.VISIBLE);
-                        ok_id.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Log.d("kick", "kick out Clicked notification");
-                                pop_up_id.setVisibility(View.INVISIBLE);
-
-                                //set kicked out to false
-                                DocumentReference checkOutRef = db.collection("users").document(sharedData.getCurr_email());
-                                checkOutRef
-                                        .update("kicked_out", false)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Log.d("updating kicked out", "DocumentSnapshot successfully updated!");
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.w("error updating time out date", "Error updating document", e);
-                                            }
-                                        });
-                                Intent profileActivityIntent = new Intent(NavActivity.this, NavActivity.class);
-                                startActivityForResult(profileActivityIntent, 0);
-
-
-                            }
-                        });
-                    }
+//                    if(kicked_out == true) {
+//                        Log.d("kicked out", "in kicked out loop");
+//                        //Create push notification
+//                        /*
+//                        CharSequence text = "You are kicked out.";
+//                        int duration = Toast.LENGTH_SHORT;
+//                        Toast toast = Toast.makeText(context, text, duration);
+//                        toast.show();
+//                        try {
+//                            Thread.sleep(6000);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                         */
+//                        //Click Kick Out Button
+//                        pop_up_id.setVisibility(View.VISIBLE);
+//                        ok_id.setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                Log.d("kick", "kick out Clicked notification");
+//                                pop_up_id.setVisibility(View.INVISIBLE);
+//
+//                                //set kicked out to false
+//                                DocumentReference checkOutRef = db.collection("users").document(sharedData.getCurr_email());
+//                                checkOutRef
+//                                        .update("kicked_out", false)
+//                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                            @Override
+//                                            public void onSuccess(Void aVoid) {
+//                                                Log.d("updating kicked out", "DocumentSnapshot successfully updated!");
+//                                            }
+//                                        })
+//                                        .addOnFailureListener(new OnFailureListener() {
+//                                            @Override
+//                                            public void onFailure(@NonNull Exception e) {
+//                                                Log.w("error updating time out date", "Error updating document", e);
+//                                            }
+//                                        });
+//                                Intent profileActivityIntent = new Intent(NavActivity.this, NavActivity.class);
+//                                startActivityForResult(profileActivityIntent, 0);
+//
+//
+//                            }
+//                        });
+//                    }
                 }
             }
 
@@ -211,27 +275,27 @@ public class NavActivity extends AppCompatActivity {
 
 
         //refresh
-        this.mHandler = new Handler();
-        this.mHandler.postDelayed(m_Runnable,5000);
+//        this.mHandler = new Handler();
+//        this.mHandler.postDelayed(m_Runnable,5000);
     }
     //refresh page
+//
+//    private final Runnable m_Runnable = new Runnable() {
+//        public void run() {
+//            NavActivity.this.mHandler.postDelayed(m_Runnable, 30000);
+//            Intent intent = new Intent(NavActivity.this, NavActivity.class);
+//            startActivity(intent);
+//        }
+//
+//    };//runnable
 
-    private final Runnable m_Runnable = new Runnable() {
-        public void run() {
-            NavActivity.this.mHandler.postDelayed(m_Runnable, 30000);
-            Intent intent = new Intent(NavActivity.this, NavActivity.class);
-            startActivity(intent);
-        }
-
-    };//runnable
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mHandler.removeCallbacks(m_Runnable);
-        finish();
-
-    }
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        mHandler.removeCallbacks(m_Runnable);
+//        finish();
+//
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
