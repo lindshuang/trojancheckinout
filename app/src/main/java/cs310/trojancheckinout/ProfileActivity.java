@@ -410,6 +410,17 @@ public class ProfileActivity extends AppCompatActivity {
                         }
                     });
 
+                    //Change Password Button
+                    changePassword.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.d("Profile", "change password Clicked");
+                            //editProfilePic(picEditText)
+                            Intent changePasswordIntent = new Intent(ProfileActivity.this, ChangePasswordActvity.class);
+                            startActivityForResult(changePasswordIntent, 0);
+                        }
+                    });
+
                     //Click Kick Out Button
                     kick_out_b_id.setOnClickListener(new View.OnClickListener() {
                         @Override
