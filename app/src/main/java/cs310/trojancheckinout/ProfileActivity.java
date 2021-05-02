@@ -427,6 +427,22 @@ public class ProfileActivity extends AppCompatActivity {
                             pop_up_kick_out.setVisibility(View.INVISIBLE);
                             checkOut();
 
+                            DocumentReference checkOutRef = db.collection("users").document(currEmail);
+                            checkOutRef
+                                    .update("kicked_out", true)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d("updating kicked out", "DocumentSnapshot successfully updated!");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w("error updating time out date", "Error updating document", e);
+                                        }
+                                    });
+
                             //navigate back to checkin page
                             Intent checkOutIntent = new Intent(ProfileActivity.this, NavActivity.class);
                             startActivityForResult(checkOutIntent, 0);
@@ -463,8 +479,8 @@ public class ProfileActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             delete_pop_up_id.setVisibility(View.INVISIBLE);
+                            checkOut();
                             deleteAccount();
-
                         }
                     });
 

@@ -198,6 +198,8 @@ public class CheckIn extends AppCompatActivity {
                                             Log.w("error updating time out date", "Error updating document", e);
                                         }
                                     });
+                            Intent intent = new Intent(CheckIn.this, CheckIn.class);
+                            startActivityForResult(intent, 0);
                         }
                     });
                 }else{
@@ -210,119 +212,119 @@ public class CheckIn extends AppCompatActivity {
 
         DocumentReference docIdRef2 = db.collection("users").document(currEmail);
 
-            docIdRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    userDoc = task.getResult();
-                    if (task.isSuccessful()) {
-                        //User(String firstName, String lastName, String email, String lindspassword, boolean checked_in, String occupation, String studentID, String profilePicture
-                        current_student = new User(
-                                userDoc.getString("firstName"),
-                                userDoc.getString("lastName"),
-                                userDoc.getString("email"),
-                                userDoc.getString("password"),
-                                userDoc.getBoolean("checked_in"),
-                                userDoc.getString("occupation"),
-                                userDoc.getString("studentID"),
-                                userDoc.getString("profilePicture"),
-                                userDoc.getString("current_qr"));
+        docIdRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                userDoc = task.getResult();
+                if (task.isSuccessful()) {
+                    //User(String firstName, String lastName, String email, String lindspassword, boolean checked_in, String occupation, String studentID, String profilePicture
+                    current_student = new User(
+                            userDoc.getString("firstName"),
+                            userDoc.getString("lastName"),
+                            userDoc.getString("email"),
+                            userDoc.getString("password"),
+                            userDoc.getBoolean("checked_in"),
+                            userDoc.getString("occupation"),
+                            userDoc.getString("studentID"),
+                            userDoc.getString("profilePicture"),
+                            userDoc.getString("current_qr"));
 
-                        //paste code
+                    //paste code
 
-                        String name = current_student.getFirstName() + " " + current_student.getLastName();
-                        name_id.setText("Hi "+ name + "!");
+                    String name = current_student.getFirstName() + " " + current_student.getLastName();
+                    name_id.setText("Hi "+ name + "!");
 
-                        //TO DO: Get name of the last building that the student was in from database
-                        String email = current_student.getEmail();
-                        DocumentReference docIdRef = db.collection("users").document(email);
-                        docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    DocumentSnapshot document = task.getResult();
-                                    List<String> histories = (List<String>) document.get("histories");
-                                    if (!document.exists()) {
-                                        Log.d("document", "Document does not exist!");
+                    //TO DO: Get name of the last building that the student was in from database
+                    String email = current_student.getEmail();
+                    DocumentReference docIdRef = db.collection("users").document(email);
+                    docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                List<String> histories = (List<String>) document.get("histories");
+                                if (!document.exists()) {
+                                    Log.d("document", "Document does not exist!");
 
-                                    }
-                                    else {
-                                        Log.d("Document", "Document exists!");
-                                        //look at last object in list of histories
-                                        int history_size = histories.size();
-                                        if(history_size > 0 && histories != null) {
-                                            String last_history = histories.get(histories.size()-1); //1anyanutakki@usc.edu
-                                            Log.d("Last history", "Last History is " + last_history);
-                                            //check histories collection by passing in concatenated email
-                                            DocumentReference docIdRef = db.collection("history").document(last_history);
-                                            docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                    if (task.isSuccessful()) {
-                                                        DocumentSnapshot document = task.getResult();
-                                                        last_building = document.getString("buildingName");
-                                                        time_elapsed = document.getDouble("totalTime");
-                                                        //convert to hrs and mins
-                                                        double m = time_elapsed % 60;
-                                                        String mins = Double.toString(m);
-                                                        double h = Math.floor(time_elapsed/60.0);
-                                                        String hour = Double.toString(h);
-                                                        String totalTime = hour + " hr " + mins + " min";
-                                                        last_timeIn = document.getString("timeInTime");
-                                                        last_timeOut = document.getString("timeOutTime");
-                                                        last_DateIn = document.getString("timeInDate");
-                                                        last_DateOut = document.getString("timeOutDate");
-                                                        Log.d("time in", "last_timeIn is " + last_timeIn);
-                                                        Log.d("time out", "last_timeOut is " + last_timeOut);
-                                                        Log.d("time in", "last_timeIn is " + last_DateIn);
-                                                        Log.d("time out", "last_timeOut is " + last_DateOut);
-
-
-                                                        //UPDATE UI
-                                                        if(last_timeOut == "" || last_timeOut == null) {
-                                                            checked_in = true;
-                                                            Log.d("printing","checked out ui updating");
-                                                            //checkIn_open_id.setText("Check Out");
-                                                            status_id.setText("You are checked in.");
-                                                            //checkIn_open_id.setBackgroundColor(Color.RED);
-                                                            location_id.setText(last_building);
-                                                            location_id.setTextColor(Color.GREEN);
-                                                            time_id.setText("Checked in at "+ last_DateIn + " " + last_timeIn);
-                                                        }
-                                                        else {
-                                                            checked_in = false;
-                                                            Log.d("printing","checked in ui updating");
-                                                            //checkIn_open_id.setText("Check In");
-                                                            status_id.setText("You are checked out.");
-                                                            //checkIn_open_id.setBackgroundColor(Color.GREEN);
-                                                            location_id.setText("Last Location: "+last_building);
-                                                            location_id.setTextColor(Color.RED);
-                                                            time_id.setText(totalTime +" | Left at "+ last_DateOut + " " + last_timeOut);
-                                                        }
-
-                                                        if (!document.exists()) {
-                                                            Log.d("document", "Document does not exist!");
-                                                        }
-                                                        else {
-                                                            Log.d("Document", "Document exists!");
-                                                            Log.d("Building name", "Last building name is " + last_building);
-                                                            location_id.setText(last_building);
-                                                        }
-                                                    } else {
-                                                        Log.d("document", "Failed with: ", task.getException());
-                                                    }
-                                                }
-                                            });
-                                        }
-
-                                    }
-                                } else {
-                                    Log.d("document", "Failed with: ", task.getException());
                                 }
+                                else {
+                                    Log.d("Document", "Document exists!");
+                                    //look at last object in list of histories
+                                    int history_size = histories.size();
+                                    if(history_size > 0 && histories != null) {
+                                        String last_history = histories.get(histories.size()-1); //1anyanutakki@usc.edu
+                                        Log.d("Last history", "Last History is " + last_history);
+                                        //check histories collection by passing in concatenated email
+                                        DocumentReference docIdRef = db.collection("history").document(last_history);
+                                        docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    DocumentSnapshot document = task.getResult();
+                                                    last_building = document.getString("buildingName");
+                                                    time_elapsed = document.getDouble("totalTime");
+                                                    //convert to hrs and mins
+                                                    double m = time_elapsed % 60;
+                                                    String mins = Double.toString(m);
+                                                    double h = Math.floor(time_elapsed/60.0);
+                                                    String hour = Double.toString(h);
+                                                    String totalTime = hour + " hr " + mins + " min";
+                                                    last_timeIn = document.getString("timeInTime");
+                                                    last_timeOut = document.getString("timeOutTime");
+                                                    last_DateIn = document.getString("timeInDate");
+                                                    last_DateOut = document.getString("timeOutDate");
+                                                    Log.d("time in", "last_timeIn is " + last_timeIn);
+                                                    Log.d("time out", "last_timeOut is " + last_timeOut);
+                                                    Log.d("time in", "last_timeIn is " + last_DateIn);
+                                                    Log.d("time out", "last_timeOut is " + last_DateOut);
+
+
+                                                    //UPDATE UI
+                                                    if(last_timeOut == "" || last_timeOut == null) {
+                                                        checked_in = true;
+                                                        Log.d("printing","checked out ui updating");
+                                                        //checkIn_open_id.setText("Check Out");
+                                                        status_id.setText("You are checked in.");
+                                                        //checkIn_open_id.setBackgroundColor(Color.RED);
+                                                        location_id.setText(last_building);
+                                                        location_id.setTextColor(Color.GREEN);
+                                                        time_id.setText("Checked in at "+ last_DateIn + " " + last_timeIn);
+                                                    }
+                                                    else {
+                                                        checked_in = false;
+                                                        Log.d("printing","checked in ui updating");
+                                                        //checkIn_open_id.setText("Check In");
+                                                        status_id.setText("You are checked out.");
+                                                        //checkIn_open_id.setBackgroundColor(Color.GREEN);
+                                                        location_id.setText("Last Location: "+last_building);
+                                                        location_id.setTextColor(Color.RED);
+                                                        time_id.setText(totalTime +" | Left at "+ last_DateOut + " " + last_timeOut);
+                                                    }
+
+                                                    if (!document.exists()) {
+                                                        Log.d("document", "Document does not exist!");
+                                                    }
+                                                    else {
+                                                        Log.d("Document", "Document exists!");
+                                                        Log.d("Building name", "Last building name is " + last_building);
+                                                        location_id.setText(last_building);
+                                                    }
+                                                } else {
+                                                    Log.d("document", "Failed with: ", task.getException());
+                                                }
+                                            }
+                                        });
+                                    }
+
+                                }
+                            } else {
+                                Log.d("document", "Failed with: ", task.getException());
                             }
-                        });
-                    }
+                        }
+                    });
                 }
-            });
+            }
+        });
 
         home_button.setOnClickListener(new View.OnClickListener() {
             @Override
