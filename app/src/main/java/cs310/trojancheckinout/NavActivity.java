@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import cs310.trojancheckinout.models.Building;
+import cs310.trojancheckinout.models.TempUser;
 import cs310.trojancheckinout.models.User;
 
 public class NavActivity extends AppCompatActivity {
@@ -61,6 +62,54 @@ public class NavActivity extends AppCompatActivity {
         popupMsg = findViewById(R.id.pop_up_csv);
         close_message= findViewById(R.id.close_message_csv);
         closePopupbutton = findViewById(R.id.closePopupbutton_csv);
+
+        //start realtime update
+        Button ok_id = (Button) findViewById(R.id.okButtonNav);
+        //Button pop_up_profile = findViewById(R.id.pop_up_kickProfile);
+        LinearLayout pop_up_profile = (LinearLayout) findViewById(R.id.pop_up_kickNav);
+        final DocumentReference docRef = db.collection("users").document(sharedData.getCurr_email());
+        docRef.addSnapshotListener((snapshot, e) -> {
+            Log.d("Doc", "inside listener");
+            if (e != null) {
+                Log.d("Doc", "Listen failed.", e);
+                return;
+            }
+            if (snapshot != null && snapshot.exists()) {
+                Log.d("Doc", "Current data: " + snapshot.getData());
+                TempUser tempUser = snapshot.toObject(TempUser.class);
+                if (tempUser.isKicked_out()){
+                    Log.d("kick", "inside temp user kicked out");
+                    pop_up_profile.setVisibility(View.VISIBLE);
+                    ok_id.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.d("kick", "kick out Clicked notification");
+                            pop_up_profile.setVisibility(View.INVISIBLE);
+                            //set kicked out to false
+                            DocumentReference checkOutRef = db.collection("users").document(sharedData.getCurr_email());
+                            checkOutRef
+                                    .update("kicked_out", false)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d("updating kicked out", "DocumentSnapshot successfully updated!");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w("error updating time out date", "Error updating document", e);
+                                        }
+                                    });
+                        }
+                    });
+                }else{
+                    pop_up_profile.setVisibility(View.INVISIBLE);
+                }
+            } else {
+                Log.d("Doc", "Current data: null");
+            }
+        }); //end kick out
 
         DocumentReference docIdRef2 = db.collection("users").document(sharedData.getCurr_email());
 

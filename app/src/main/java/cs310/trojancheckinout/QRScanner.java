@@ -66,6 +66,7 @@ import java.util.ArrayList;
 
 import cs310.trojancheckinout.models.Building;
 import cs310.trojancheckinout.models.History;
+import cs310.trojancheckinout.models.TempUser;
 import cs310.trojancheckinout.models.User;
 
 public class QRScanner extends AppCompatActivity {
@@ -129,8 +130,56 @@ public class QRScanner extends AppCompatActivity {
         if(bundle !=null) {
             currEmail = sharedData.getCurr_email(); //uncomment when you pass in bundle
             if(currEmail != null || currEmail.length() > 0) {
-                DocumentReference docIdRef2 = db.collection("users").document(currEmail);
 
+                //start realtime update
+                Button ok_id = (Button) findViewById(R.id.okButtonScanner);
+                //Button pop_up_profile = findViewById(R.id.pop_up_kickProfile);
+                LinearLayout pop_up_profile = (LinearLayout) findViewById(R.id.pop_up_kickScanner);
+                final DocumentReference docRef = db.collection("users").document(sharedData.getCurr_email());
+                docRef.addSnapshotListener((snapshot, e) -> {
+                    Log.d("Doc", "inside listener");
+                    if (e != null) {
+                        Log.d("Doc", "Listen failed.", e);
+                        return;
+                    }
+                    if (snapshot != null && snapshot.exists()) {
+                        Log.d("Doc", "Current data: " + snapshot.getData());
+                        TempUser tempUser = snapshot.toObject(TempUser.class);
+                        if (tempUser.isKicked_out()){
+                            Log.d("kick", "inside temp user kicked out");
+                            pop_up_profile.setVisibility(View.VISIBLE);
+                            ok_id.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Log.d("kick", "kick out Clicked notification");
+                                    pop_up_profile.setVisibility(View.INVISIBLE);
+                                    //set kicked out to false
+                                    DocumentReference checkOutRef = db.collection("users").document(sharedData.getCurr_email());
+                                    checkOutRef
+                                            .update("kicked_out", false)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.d("updating kicked out", "DocumentSnapshot successfully updated!");
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w("error updating time out date", "Error updating document", e);
+                                                }
+                                            });
+                                }
+                            });
+                        }else{
+                            pop_up_profile.setVisibility(View.INVISIBLE);
+                        }
+                    } else {
+                        Log.d("Doc", "Current data: null");
+                    }
+                }); //end kick out
+
+                DocumentReference docIdRef2 = db.collection("users").document(currEmail);
                 docIdRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -319,7 +368,18 @@ public class QRScanner extends AppCompatActivity {
                 else if (check.compareTo("checked in") == 0  && (qrCode.compareTo(current_qr) != 0))
                 {
                     checkedIn = true;
-                    confirm_pop_up_id.setText("Invalid QR Code.");
+                    pop_up_id.setVisibility(View.INVISIBLE);
+                    invalid_pop_up_id.setVisibility(View.VISIBLE);
+                    invalid_text_id.setText("Invalid QR Code.");
+
+                    ok_b_id.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            //navigate to check in page
+                            invalid_pop_up_id.setVisibility(View.INVISIBLE);
+                            Intent intent = new Intent(QRScanner.this, CheckIn.class);
+                            startActivityForResult(intent, 0);
+                        }
+                    });
                 }
                 else if (check.compareTo("checked out") == 0)
                 {
