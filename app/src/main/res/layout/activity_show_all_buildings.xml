@@ -41,5 +41,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
+    <Button
+        android:id="@+id/delete_building_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginBottom="40dp"
+        android:text="Delete Building"
+        app:layout_constraintBottom_toTopOf="@+id/firestore_list"
+        app:layout_constraintStart_toEndOf="@+id/add_building" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
