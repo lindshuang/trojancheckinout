@@ -43,10 +43,14 @@ public class NavActivity extends AppCompatActivity {
     String role = "";
     Map<String,String> map = new HashMap<String, String>();
     boolean isAddBuildingCSVClicked = false;
+    boolean isRemoveBuildingCSVClicked = false;
+    boolean isUpdateBuildingCSVClicked = false;
 
     private LinearLayout popupMsg;
     public TextView close_message;
     private Button closePopupbutton;
+    private Button csvRemovebutton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +62,7 @@ public class NavActivity extends AppCompatActivity {
         Button csvButton = (Button) findViewById(R.id.csv_button);
         Button csvAddButton = (Button) findViewById(R.id.csv_add_button);
         errortxt = findViewById(R.id.errortxt);
+        csvRemovebutton = findViewById(R.id.csv_remove_button);
 
         popupMsg = findViewById(R.id.pop_up_csv);
         close_message= findViewById(R.id.close_message_csv);
@@ -179,7 +184,9 @@ public class NavActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent mediaIntent = new Intent(Intent.ACTION_GET_CONTENT);
                 mediaIntent.setType("*/*"); // Set MIME type as per requirement
+                isUpdateBuildingCSVClicked = true;
                 startActivityForResult(mediaIntent,GET_FROM_GALLERY);
+
             }
         });
 
@@ -192,6 +199,16 @@ public class NavActivity extends AppCompatActivity {
                 startActivityForResult(mediaIntent,GET_FROM_GALLERY);
             }
         });
+
+        csvRemovebutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mediaIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                mediaIntent.setType("*/*"); // Set MIME type as per requirement
+                isRemoveBuildingCSVClicked = true;
+                startActivityForResult(mediaIntent,GET_FROM_GALLERY);
+            }
+        });
     }
 
     @Override
@@ -200,9 +217,9 @@ public class NavActivity extends AppCompatActivity {
         Log.d("Doc", "browse file");
 
         //Detects request codes
-        if(!isAddBuildingCSVClicked && requestCode==GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
+        if(isUpdateBuildingCSVClicked  && requestCode==GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
             Uri csvUri = data.getData();
-            Log.d("Doc", "CSV URI= " + csvUri);
+            Log.d("Doc", "update CSV URI= " + csvUri);
 
             try {
                 //File csvFile = new File(csvUri.getPath());
@@ -212,15 +229,22 @@ public class NavActivity extends AppCompatActivity {
 
                 //ashna's code
                 String[] line = reader.readNext();
-                while ((line = reader.readNext()) != null) {
-                    // Split the line into different tokens (using the comma as a separator).
-                    // String[] tokens = line.split(",");
-                    Log.d("FILE READER CSV","CSV " + line[0] + line[1]);
+                Log.d("update building","update building" + line.length );
 
-                    String building_name = line[0];
-                    String building_cap = line[1];
-                    map.put(building_name, building_cap);
+                if(line.length != 2){
+                    close_message.setText("File is not formatted correctly");
+                }
+                else {
+                    while ((line = reader.readNext()) != null) {
+                        // Split the line into different tokens (using the comma as a separator).
+                        // String[] tokens = line.split(",");
+                        Log.d("FILE READER CSV", "CSV " + line[0] + line[1]);
 
+                        String building_name = line[0];
+                        String building_cap = line[1];
+                        map.put(building_name, building_cap);
+
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -242,16 +266,17 @@ public class NavActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         popupMsg.setVisibility(View.INVISIBLE);
                         close_message.setText("");
-
+                        isUpdateBuildingCSVClicked = false;
                         map.clear();
                     }
                 });
+                isUpdateBuildingCSVClicked = false;
             }
 
         }
         else if(isAddBuildingCSVClicked && requestCode==GET_FROM_GALLERY && resultCode == Activity.RESULT_OK){
             Uri csvUri = data.getData();
-            Log.d("Doc", "CSV URI= " + csvUri);
+            Log.d("Doc", "ADD BUILDING CSV URI= " + csvUri);
 
             try {
                 //File csvFile = new File(csvUri.getPath());
@@ -261,16 +286,22 @@ public class NavActivity extends AppCompatActivity {
 
                 //ashna's code
                 String[] line = reader.readNext();
-                while ((line = reader.readNext()) != null) {
-                    // Split the line into different tokens (using the comma as a separator).
-                    // String[] tokens = line.split(",");
-                    Log.d("FILE READER CSV","CSV " + line[0] + line[1]);
+                Log.d("add building","add building" + line.length );
+                if(line.length != 3){
+                    close_message.setText("File is not formatted correctly");
+                }
+                else {
+                    while ((line = reader.readNext()) != null) {
+                        // Split the line into different tokens (using the comma as a separator).
+                        // String[] tokens = line.split(",");
+                        Log.d("FILE READER CSV", "CSV " + line[0] + line[1]);
 
-                    String full_building_name = line[0];
-                    String building_name = line[1];
-                    String building_cap = line[2];
-                    //map.put(building_name, building_cap);
-                    addNewBuildingCheckDB(full_building_name, building_name, building_cap);
+                        String full_building_name = line[0];
+                        String building_name = line[1];
+                        String building_cap = line[2];
+                        //map.put(building_name, building_cap);
+                        addNewBuildingCheckDB(full_building_name, building_name, building_cap);
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -286,10 +317,60 @@ public class NavActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         popupMsg.setVisibility(View.INVISIBLE);
                         close_message.setText("");
-
+                        isAddBuildingCSVClicked = false;
                         map.clear();
                     }
                 });
+            }
+            isAddBuildingCSVClicked = false;
+        }
+        else if(isRemoveBuildingCSVClicked && requestCode==GET_FROM_GALLERY && resultCode == Activity.RESULT_OK){
+
+            Uri csvUri = data.getData();
+            Log.d("Doc", "REMOVE BUILDING CSV URI= " + csvUri);
+
+            try {
+                //File csvFile = new File(csvUri.getPath());
+                Log.d("Doc", "CSV path= " + csvUri.getPath());
+                InputStream input = getContentResolver().openInputStream(csvUri);
+                CSVReader reader = new CSVReader(new InputStreamReader(input)); //csvreader
+
+                //ashna's code
+                String[] line = reader.readNext();
+                Log.d("REMOVE FILE READER CSV  " + line.length,"CSV " + line[0]);
+                if(line.length > 1){
+                    close_message.setText("File is not formatted correctly");
+                }
+                else {
+                    while ((line = reader.readNext()) != null) {
+                        // Split the line into different tokens (using the comma as a separator).
+                        // String[] tokens = line.split(",");
+                        Log.d("FILE READER CSV2", "CSV " + line[0]);
+
+                        String building_code = line[0];
+                        //map.put(building_name, building_cap);
+                        removeBuildingCheckDB(building_code);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "File not formatted properly" + e, Toast.LENGTH_SHORT).show();
+            }
+            finally{
+                popupMsg.setVisibility(View.VISIBLE);
+
+                closePopupbutton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        popupMsg.setVisibility(View.INVISIBLE);
+                        close_message.setText("");
+                        isRemoveBuildingCSVClicked = false;
+                        map.clear();
+                    }
+                });
+                isRemoveBuildingCSVClicked = false;
             }
         }
         else{
@@ -400,5 +481,57 @@ public class NavActivity extends AppCompatActivity {
     }
 
 
+    public void removeBuildingCheckDB(String code){
+        DocumentReference docIdRef = db.collection("buildings").document(code);
+        docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    String cur_cap = document.getString("currCapacity");
+                    double curcap = Double.parseDouble(cur_cap);
+
+                    if (!document.exists()) {
+                        String currErr = (String) errortxt.getText();
+                        //errortxt.setText(currErr + "\n" + name + "Building already exists - Check file");
+                        close_message.setText(currErr + "\n" + code + "Building does not exist - Check file");
+                        Log.d("Document", "Document exists!");
+                    }
+                    else if(curcap > 0){
+                        String currErr = (String) errortxt.getText();
+                        //errortxt.setText(currErr + "\n" + name + "Building already exists - Check file");
+                        close_message.setText(currErr + "\n" + code + " Building has students checked in");
+                        Log.d("Document", "Document exists!");
+                    }
+                    else {
+                        removeBuilding(code);
+
+                    }
+                } else {
+                    Log.d("document", "Failed with: ", task.getException());
+                }
+            }
+        });
+    }
+
+    public void removeBuilding(String code){
+        db.collection("buildings").document(code)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        String currErr = (String) errortxt.getText();
+                        //errortxt.setText(currErr + "\n" + name + "Building already exists - Check file");
+                        close_message.setText(currErr + "\n" + code + " Building deleted");
+                        Log.d("deleted", "DocumentSnapshot successfully deleted!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("error", "Error deleting document", e);
+                    }
+                });
+    }
 
 }
