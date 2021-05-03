@@ -221,6 +221,7 @@ public class ProfileActivity extends AppCompatActivity {
                     Button kick_out_b_id = findViewById(R.id.button_kick_out);
                     Button confirmKickOut_b_id = findViewById(R.id.confirmKickOutButton);
                     Button cancelKickOut_b_id = findViewById(R.id.cancelKickOutButton);
+                    Button restoreButton = findViewById(R.id.button_restore_account);
 
                     //pop up
                     pop_up_id = (LinearLayout) findViewById(R.id.pop_up);
@@ -245,6 +246,7 @@ public class ProfileActivity extends AppCompatActivity {
                     //set non-Current User view
                     if(!isCurrUser){
                         logoutButton.setVisibility(View.INVISIBLE);
+                        restoreButton.setVisibility(View.INVISIBLE);
                         deleteAccount.setVisibility(View.INVISIBLE);
                         checkoutButton.setVisibility(View.INVISIBLE);
                         editProfileButton.setVisibility(View.INVISIBLE);
@@ -258,6 +260,7 @@ public class ProfileActivity extends AppCompatActivity {
                     // Set isDeleted view
                     if(isuserDeleted){
                         isDeletedView.setVisibility(View.VISIBLE);
+                        restoreButton.setVisibility(View.VISIBLE);
                         logoutButton.setVisibility(View.INVISIBLE);
                         deleteAccount.setVisibility(View.INVISIBLE);
                         checkoutButton.setVisibility(View.INVISIBLE);
@@ -265,6 +268,7 @@ public class ProfileActivity extends AppCompatActivity {
                         changePassword.setVisibility(View.INVISIBLE);
                         editProfileGalleryButton.setVisibility(View.INVISIBLE);
                         kick_out_b_id.setVisibility(View.INVISIBLE);
+
                     }else{
                         isDeletedView.setVisibility(View.INVISIBLE);
                     }
@@ -558,8 +562,12 @@ public class ProfileActivity extends AppCompatActivity {
                         }
                     });
 
-
-
+                    //click on restore account
+                    restoreButton.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            restoreAccount();
+                        }
+                    });
                 }
             }
         });
@@ -634,7 +642,6 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-
     //Log Out Button Function
     protected void logout(){
         Intent intent = new Intent(ProfileActivity.this, LogInActivity.class);
@@ -662,6 +669,34 @@ public class ProfileActivity extends AppCompatActivity {
         Intent intent = new Intent(ProfileActivity.this, LogInActivity.class);
         intent.putExtra("email", "");
         startActivity(intent);
+    }
+
+    //Restore Account
+    protected void restoreAccount(){
+        db.collection("users").document(currUser.getEmail())
+                .update("is_deleted", false)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("Doc", "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("Doc", "Error writing document", e);
+                    }
+                });
+
+//        Intent intent = new Intent(ProfileActivity.this, ProfileActivity.class);
+//        //intent.putExtra("email", "");
+//        startActivity(intent);
+
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(getIntent());
+        overridePendingTransition(0, 0);
+
     }
 
     //Edit Profile Picture Function

@@ -364,6 +364,16 @@
             android:textColor="#4D98A1"
             android:textSize="14sp" />
 
+        <Button
+            android:id="@+id/button_restore_account"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="viewStart"
+            android:padding="0dp"
+            android:textSize="14sp"
+            android:textColor="#4D98A1"
+            android:text="Restore Account"/>
 
         <Button
             android:id="@+id/button_edit_pic"
@@ -409,7 +419,6 @@
             android:textSize="14sp"
             android:textColor="#4D98A1"
             android:text="Delete Account" />
-
 
         <Button
             android:id="@+id/button_logout"
