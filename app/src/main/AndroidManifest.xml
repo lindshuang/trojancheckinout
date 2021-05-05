@@ -24,6 +24,9 @@
         <activity android:name=".NavActivity" />
         <activity android:name=".QRScanner" />
         <activity android:name=".CheckIn" />
+
+        <activity android:name=".DeleteBuilding" />
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">
