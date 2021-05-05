@@ -129,11 +129,14 @@ public class NavActivity extends AppCompatActivity {
                         searchStudentsButton.setVisibility(View.VISIBLE);
                         csvButton.setVisibility(View.VISIBLE);
                         csvAddButton.setVisibility(View.VISIBLE);
+                        csvRemovebutton.setVisibility(View.VISIBLE);
                     } else {
                         showBuildingsButton.setVisibility(View.INVISIBLE);
                         searchStudentsButton.setVisibility(View.INVISIBLE);
                         csvButton.setVisibility(View.INVISIBLE);
                         csvAddButton.setVisibility(View.INVISIBLE);
+                        csvRemovebutton.setVisibility(View.INVISIBLE);
+
                     }
                 }
             }
@@ -488,8 +491,6 @@ public class NavActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    String cur_cap = document.getString("currCapacity");
-                    double curcap = Double.parseDouble(cur_cap);
 
                     if (!document.exists()) {
                         String currErr = (String) errortxt.getText();
@@ -497,15 +498,19 @@ public class NavActivity extends AppCompatActivity {
                         close_message.setText(currErr + "\n" + code + "Building does not exist - Check file");
                         Log.d("Document", "Document exists!");
                     }
-                    else if(curcap > 0){
-                        String currErr = (String) errortxt.getText();
-                        //errortxt.setText(currErr + "\n" + name + "Building already exists - Check file");
-                        close_message.setText(currErr + "\n" + code + " Building has students checked in");
-                        Log.d("Document", "Document exists!");
-                    }
                     else {
-                        removeBuilding(code);
+                        String cur_cap = document.getString("currCapacity");
+                        double curcap = Double.parseDouble(cur_cap);
 
+                        if (curcap > 0) {
+                                String currErr = (String) errortxt.getText();
+                                //errortxt.setText(currErr + "\n" + name + "Building already exists - Check file");
+                                close_message.setText(currErr + "\n" + code + " Building has students checked in");
+                                Log.d("Document", "Document exists!");
+                            } else {
+                                removeBuilding(code);
+
+                            }
                     }
                 } else {
                     Log.d("document", "Failed with: ", task.getException());
