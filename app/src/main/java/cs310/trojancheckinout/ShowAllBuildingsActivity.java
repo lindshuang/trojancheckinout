@@ -53,6 +53,7 @@ public class ShowAllBuildingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_all_buildings);
 
         Button addBuildingButton = (Button) findViewById(R.id.add_building);
+        Button deleteBuildingButton = (Button) findViewById(R.id.delete_building_button);
 
 
 
@@ -63,6 +64,14 @@ public class ShowAllBuildingsActivity extends AppCompatActivity {
                 startActivity(AddIntent);
             }
         });
+        deleteBuildingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent DeleteIntent = new Intent(ShowAllBuildingsActivity.this, DeleteBuilding.class);
+                startActivity(DeleteIntent);
+            }
+        });
+
 
 
         mFireStoreList = findViewById(R.id.firestore_list);
